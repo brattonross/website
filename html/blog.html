@@ -1,0 +1,34 @@
+{{ define "body" }}
+<div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10">
+  <div class="flex flex-col gap-y-4">
+    <h1 class="text-4xl font-bold leading-6">Blog</h1>
+    <p class="text-lg leading-5 text-lo-contrast">Thoughts and ramblings.</p>
+  </div>
+  {{ if .Posts }}
+  <section>
+    <ul class="flex flex-col gap-4">
+      {{ range .Posts }}
+      <li class="inline-flex flex-col">
+        <a href="{{ .Href }}" class="text-xl transition-colors hover:underline">
+          {{ .Title }}
+        </a>
+        <date datetime='{{ .Date.Format "2006-01-02" }}'>
+          <small class="text-lo-contrast"
+            >{{ .Date.Format "January 2 2006" }}</small
+          >
+        </date>
+        <p class="text-lo-contrast">{{ .Description }}</p>
+      </li>
+      {{ end }}
+    </ul>
+  </section>
+  {{ else }}
+  <section
+    class="flex min-h-[300px] flex-col items-center justify-center rounded-md bg-sage-2 p-6 ring-1 ring-sage-6"
+  >
+    <h2 class="text-lg font-bold">Nothing here yet</h2>
+    <p class="text-lo-contrast">Check back soon :^)</p>
+  </section>
+  {{ end }}
+</div>
+{{ end }}

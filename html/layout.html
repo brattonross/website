@@ -1,0 +1,58 @@
+{{ define "layout" }}
+<!doctype html>
+<html
+  lang="en"
+  class="h-full bg-white text-hi-contrast antialiased selection:bg-grass-7 selection:text-hi-contrast dark:bg-sage-1"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="icon" href="/public/favicon.ico" />
+    <link
+      rel="preload"
+      href="/public/fonts/Atkinson-Hyperlegible-Regular-102a.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/public/fonts/Atkinson-Hyperlegible-Bold-102a.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link rel="preload" href="/public/style.css" as="style" />
+    <link rel="stylesheet" href="/public/style.css" />
+    <title>Ross Bratton</title>
+    <meta
+      name="description"
+      content="Software Engineer based in Bristol, UK."
+    />
+  </head>
+  <body class="flex h-full flex-col">
+    <header class="border-b border-sage-6">
+      <nav class="mx-auto flex max-w-4xl items-center gap-6 px-4 py-6">
+        <a class="hover:underline" href="/">Home</a>
+        <a class="hover:underline" href="/blog">Blog</a>
+        <a class="hover:underline" href="/uses">Uses</a>
+      </nav>
+    </header>
+    <main class="flex-1">{{ template "body" . }}</main>
+    <footer class="border-t border-sage-6 text-lo-contrast">
+      <div class="mx-auto flex max-w-4xl items-center px-4 py-6">
+        <div class="flex flex-1 gap-2 text-sm">
+          <a class="hover:underline" href="https://twitter.com/brattonross"
+            >Twitter</a
+          >
+          &bull;
+          <a class="hover:underline" href="https://github.com/brattonross"
+            >GitHub</a
+          >
+        </div>
+        <p class="text-xs">© Ross Bratton 2023</p>
+      </div>
+    </footer>
+  </body>
+</html>
+{{ end }}
