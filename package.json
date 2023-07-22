@@ -4,10 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm run generate:css --minify",
-    "dev": "ENV=dev pnpm run \"/^dev:.*/\"",
-    "dev:server": "go run ./...",
-    "dev:tailwind": "pnpm run generate:css --watch",
+    "build": "bun run generate:css --minify",
+    "dev": "bun run generate:css --watch",
     "format": "prettier --write . --ignore-path .gitignore --plugin-search-dir=.",
     "generate:css": "tailwindcss -i ./tailwind.css -o ./public/style.css"
   },
