@@ -25,8 +25,16 @@ func Parse(r io.Reader) (*Markdown, error) {
 
 	for scanner.Scan() {
 		if stage == "content" {
-			content = append(content, scanner.Bytes()...)
-			content = append(content, '\n')
+			bs := scanner.Bytes()
+			if len(content) == 0 && len(bs) == 0 {
+				continue
+			}
+
+			if len(bs) == 0 {
+				content = append(content, '\n', '\n')
+			} else {
+				content = append(content, bs...)
+			}
 			continue
 		}
 

@@ -36,8 +36,59 @@ func main() {
 		PostPage(w, slug)
 	})
 
+	http.HandleFunc("/blog.json", func(w http.ResponseWriter, r *http.Request) {
+		feed, err := GenerateBlogFeed()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json, err := feed.ToJSON()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		_, err = w.Write([]byte(json))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
+	http.HandleFunc("/blog/rss.xml", func(w http.ResponseWriter, r *http.Request) {
+		feed, err := GenerateBlogFeed()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		rss, err := feed.ToRss()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/rss+xml")
+		_, err = w.Write([]byte(rss))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
+	http.HandleFunc("/uses", func(w http.ResponseWriter, r *http.Request) {
+		UsesPage(w)
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		PageFromPath(w, r.URL.Path)
+		if r.URL.Path != "/" && r.URL.Path != "/index.html" {
+			NotFound(w)
+			return
+		}
+
+		HomePage(w)
 	})
 
 	port := os.Getenv("PORT")

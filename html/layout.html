@@ -24,10 +24,10 @@
     />
     <link rel="preload" href="/public/style.css" as="style" />
     <link rel="stylesheet" href="/public/style.css" />
-    <title>Ross Bratton</title>
+    <title>Ross Bratton{{ if .Title }} &ndash; {{ .Title }}{{ end }}</title>
     <meta
       name="description"
-      content="Software Engineer based in Bristol, UK."
+      content="{{ if .Description }}{{ .Description }}{{ else }}Software Engineer based in Bristol, UK.{{ end }}"
     />
   </head>
   <body class="flex h-full flex-col">
@@ -48,6 +48,10 @@
           &bull;
           <a class="hover:underline" href="https://github.com/brattonross"
             >GitHub</a
+          >
+          &bull;
+          <a class="hover:underline" href="/blog/rss.xml"
+            >RSS</a
           >
         </div>
         <p class="text-xs">© Ross Bratton 2023</p>

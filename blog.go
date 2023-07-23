@@ -27,6 +27,7 @@ type postFrontmatter struct {
 }
 
 type post struct {
+	Slug        string
 	Frontmatter postFrontmatter
 	Content     []byte
 }
@@ -44,6 +45,7 @@ func parsePost(slug string, r io.Reader) (*post, error) {
 	}
 
 	return &post{
+		Slug: slug,
 		Frontmatter: postFrontmatter{
 			Title:       md.Frontmatter["title"],
 			Href:        "/blog/" + slug,
@@ -74,9 +76,27 @@ func postByFileName(filename string) (*post, error) {
 	return post, nil
 }
 
+func listPosts() ([]post, error) {
+	entries, err := posts.ReadDir(filepath.Join("data", "blog"))
+	if err != nil {
+		return nil, err
+	}
+
+	posts := []post{}
+	for _, entry := range entries {
+		post, err := postByFileName(entry.Name())
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, *post)
+	}
+
+	return posts, nil
+}
+
 func RootPage(w http.ResponseWriter) {
 	filePath := "html/blog.html"
-	entries, err := posts.ReadDir(filepath.Join("data", "blog"))
+	posts, err := listPosts()
 	if err != nil {
 		log.Println(err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -84,17 +104,11 @@ func RootPage(w http.ResponseWriter) {
 	}
 
 	frontmatters := []postFrontmatter{}
-	for _, entry := range entries {
-		post, err := postByFileName(entry.Name())
-		if err != nil {
-			log.Println(err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-			return
-		}
+	for _, post := range posts {
 		frontmatters = append(frontmatters, post.Frontmatter)
 	}
 
-	tmpl, err := parseTemplates(layoutPath, filePath)
+	tmpl, err := ParseTemplates(layoutPath, filePath)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -102,9 +116,13 @@ func RootPage(w http.ResponseWriter) {
 	}
 
 	err = tmpl.ExecuteTemplate(w, "layout", struct {
-		Posts []postFrontmatter
+		Description string
+		Posts       []postFrontmatter
+		Title       string
 	}{
-		Posts: frontmatters,
+		Description: "Ross Bratton's blog",
+		Posts:       frontmatters,
+		Title:       "Blog",
 	})
 	if err != nil {
 		log.Println(err)
@@ -130,7 +148,7 @@ func PostPage(w http.ResponseWriter, slug string) {
 
 	bs := gomd.Render(doc, renderer)
 
-	tmpl, err := parseTemplates(
+	tmpl, err := ParseTemplates(
 		layoutPath,
 		"html/blogpost.html",
 	)
@@ -147,7 +165,15 @@ func PostPage(w http.ResponseWriter, slug string) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, "layout", post.Frontmatter)
+	err = tmpl.ExecuteTemplate(w, "layout", struct {
+		Description string
+		Post        postFrontmatter
+		Title       string
+	}{
+		Description: post.Frontmatter.Description,
+		Post:        post.Frontmatter,
+		Title:       post.Frontmatter.Title,
+	})
 	if err != nil {
 		log.Println(err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
