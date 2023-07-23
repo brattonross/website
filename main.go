@@ -28,13 +28,11 @@ func main() {
 
 	http.Handle("/public/", withCaching(http.StripPrefix("/public/", http.FileServer(http.FS(public)))))
 
-	http.HandleFunc("/blog", func(w http.ResponseWriter, r *http.Request) {
-		RootPage(w)
-	})
+	http.HandleFunc("/blog", BlogRootPage)
 
 	http.HandleFunc("/blog/", func(w http.ResponseWriter, r *http.Request) {
 		slug := strings.TrimPrefix(r.URL.Path, "/blog/")
-		PostPage(w, slug)
+		PostPage(w, r, slug)
 	})
 
 	http.HandleFunc("/blog.json", func(w http.ResponseWriter, r *http.Request) {
@@ -132,17 +130,38 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/uses", func(w http.ResponseWriter, r *http.Request) {
-		UsesPage(w)
-	})
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" && r.URL.Path != "/index.html" {
-			NotFound(w)
+	http.HandleFunc("/theme", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 
-		HomePage(w)
+		err := r.ParseForm()
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		theme := r.Form.Get("theme")
+		if theme == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		SetTheme(w, theme)
+
+		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusSeeOther)
+	})
+
+	http.HandleFunc("/uses", UsesPage)
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" && r.URL.Path != "/index.html" {
+			NotFound(w, r)
+			return
+		}
+
+		HomePage(w, r)
 	})
 
 	port := os.Getenv("PORT")

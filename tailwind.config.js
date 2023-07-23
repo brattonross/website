@@ -4,6 +4,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./html/**/*.html"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {

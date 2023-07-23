@@ -1,9 +1,6 @@
 {{ define "layout" }}
 <!doctype html>
-<html
-  lang="en"
-  class="h-full bg-white text-hi-contrast antialiased selection:bg-grass-7 selection:text-hi-contrast dark:bg-sage-1"
->
+<html lang="en" class="h-full antialiased">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -29,14 +26,43 @@
       name="description"
       content="{{ if .Description }}{{ .Description }}{{ else }}Software Engineer based in Bristol, UK.{{ end }}"
     />
+    <script>
+      const ssrTheme = {{ .Theme }};
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      if (ssrTheme === "dark" || (!ssrTheme && systemTheme === "dark")) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
   </head>
-  <body class="flex h-full flex-col">
-    <header class="border-b border-sage-6">
-      <nav class="mx-auto flex max-w-4xl items-center gap-6 px-4 py-6">
-        <a class="hover:underline" href="/">Home</a>
-        <a class="hover:underline" href="/blog">Blog</a>
-        <a class="hover:underline" href="/uses">Uses</a>
-      </nav>
+  <body
+    class="flex h-full flex-col bg-sand-2 text-hi-contrast selection:bg-grass-7 selection:text-hi-contrast dark:bg-sage-1"
+  >
+    <header class="flex items-center border-b border-sage-6">
+      <div class="w-full mx-auto flex max-w-4xl items-center gap-6 px-4 py-6">
+        <nav class="flex-1 flex items-center gap-6">
+          <a class="hover:underline" href="/">Home</a>
+          <a class="hover:underline" href="/blog">Blog</a>
+          <a class="hover:underline" href="/uses">Uses</a>
+        </nav>
+        <form id="theme-form" action="/theme" method="POST" class="flex items-center justify-center">
+          <input
+            type="hidden"
+            name="theme"
+            value="{{ if eq .Theme "dark" }}light{{ else }}dark{{ end }}"
+          />
+          <button
+            aria-label="Switch to {{ if eq .Theme "dark" }}light{{ else }}dark{{ end }} theme"
+            class="flex items-center justify-center p-2 rounded-full text-hi-contrast ring-2 ring-sage-7 hover:ring-hi-contrast focus:outline-none focus:ring-hi-contrast active:ring-hi-contrast transition-colors"
+            type="submit"
+          >
+            <svg class="w-6 h-6">
+              <use xlink:href="{{ if eq .Theme "dark" }}/public/icons/24-outline.svg#moon{{ else }}/public/icons/24-outline.svg#sun{{ end }}" />
+            </svg>
+          </button>
+        </form>
+      </div>
     </header>
     <main class="flex-1">{{ template "body" . }}</main>
     <footer class="border-t border-sage-6 text-lo-contrast">
@@ -50,13 +76,27 @@
             >GitHub</a
           >
           &bull;
-          <a class="hover:underline" href="/blog/rss.xml"
-            >RSS</a
-          >
+          <a class="hover:underline" href="/blog/rss.xml">RSS</a>
         </div>
         <p class="text-xs">© Ross Bratton 2023</p>
       </div>
     </footer>
+    <script>
+      if (!ssrTheme) {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+          if (e.matches) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        });
+
+        const themeForm = document.getElementById("theme-form");
+        themeForm.querySelector("input").setAttribute("value", systemTheme === "dark" ? "light" : "dark");
+        themeForm.querySelector("button").setAttribute("aria-label", `Switch to ${systemTheme === "dark" ? "light" : "dark"} theme`);
+        themeForm.querySelector("button svg use").setAttribute("xlink:href", `/public/icons/24-outline.svg#${systemTheme === "dark" ? "moon" : "sun"}`);
+      }
+    </script>
   </body>
 </html>
 {{ end }}

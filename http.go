@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func NotFound(w http.ResponseWriter) {
+func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	tmpl, err := ParseTemplates(layoutPath, "html/404.html")
 	if err != nil {
@@ -13,12 +13,9 @@ func NotFound(w http.ResponseWriter) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, "layout", struct {
-		Description string
-		Title       string
-	}{
-		Description: "Page not found",
-		Title:       "Not Found",
+	err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+		"Description": "Page not found",
+		"Title":       "Not Found",
 	})
 	if err != nil {
 		InternalServerError(w, err)

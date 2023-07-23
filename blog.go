@@ -95,7 +95,7 @@ func listPosts() ([]post, error) {
 	return posts, nil
 }
 
-func RootPage(w http.ResponseWriter) {
+func BlogRootPage(w http.ResponseWriter, r *http.Request) {
 	filePath := "html/blog.html"
 	posts, err := listPosts()
 	if err != nil {
@@ -114,14 +114,10 @@ func RootPage(w http.ResponseWriter) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, "layout", struct {
-		Description string
-		Posts       []postFrontmatter
-		Title       string
-	}{
-		Description: "Ross Bratton's blog",
-		Posts:       frontmatters,
-		Title:       "Blog",
+	err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+		"Description": "Ross Bratton's blog",
+		"Posts":       frontmatters,
+		"Title":       "Blog",
 	})
 	if err != nil {
 		InternalServerError(w, err)
@@ -129,11 +125,11 @@ func RootPage(w http.ResponseWriter) {
 	}
 }
 
-func PostPage(w http.ResponseWriter, slug string) {
+func PostPage(w http.ResponseWriter, r *http.Request, slug string) {
 	post, err := postByFileName(slug + ".md")
 	if err != nil {
 		if os.IsNotExist(err) {
-			NotFound(w)
+			NotFound(w, r)
 			return
 		}
 
@@ -165,14 +161,10 @@ func PostPage(w http.ResponseWriter, slug string) {
 		return
 	}
 
-	err = tmpl.ExecuteTemplate(w, "layout", struct {
-		Description string
-		Post        postFrontmatter
-		Title       string
-	}{
-		Description: post.Frontmatter.Description,
-		Post:        post.Frontmatter,
-		Title:       post.Frontmatter.Title,
+	err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+		"Description": post.Frontmatter.Description,
+		"Post":        post.Frontmatter,
+		"Title":       post.Frontmatter.Title,
 	})
 	if err != nil {
 		InternalServerError(w, err)
