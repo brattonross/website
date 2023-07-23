@@ -1,15 +1,13 @@
 package main
 
 import (
-	"log"
 	"net/http"
 )
 
 func UsesPage(w http.ResponseWriter) {
 	tmpl, err := ParseTemplates(layoutPath, "html/uses.html")
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
@@ -21,8 +19,7 @@ func UsesPage(w http.ResponseWriter) {
 		Title:       "Uses",
 	})
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 }

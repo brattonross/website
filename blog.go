@@ -99,8 +99,7 @@ func RootPage(w http.ResponseWriter) {
 	filePath := "html/blog.html"
 	posts, err := listPosts()
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
@@ -111,8 +110,7 @@ func RootPage(w http.ResponseWriter) {
 
 	tmpl, err := ParseTemplates(layoutPath, filePath)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
@@ -126,8 +124,7 @@ func RootPage(w http.ResponseWriter) {
 		Title:       "Blog",
 	})
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 }
@@ -140,8 +137,7 @@ func PostPage(w http.ResponseWriter, slug string) {
 			return
 		}
 
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
@@ -159,15 +155,13 @@ func PostPage(w http.ResponseWriter, slug string) {
 		"html/blogpost.html",
 	)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
 	tmpl, err = tmpl.Parse("{{define \"content\"}}" + string(bs) + "{{end}}")
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 
@@ -181,8 +175,7 @@ func PostPage(w http.ResponseWriter, slug string) {
 		Title:       post.Frontmatter.Title,
 	})
 	if err != nil {
-		log.Println(err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		InternalServerError(w, err)
 		return
 	}
 }

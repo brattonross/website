@@ -40,20 +40,20 @@ func main() {
 	http.HandleFunc("/blog.json", func(w http.ResponseWriter, r *http.Request) {
 		feed, err := GenerateBlogFeed()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
 		json, err := feed.ToJSON()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write([]byte(json))
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 	})
@@ -61,20 +61,20 @@ func main() {
 	http.HandleFunc("/blog/rss.xml", func(w http.ResponseWriter, r *http.Request) {
 		feed, err := GenerateBlogFeed()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
 		rss, err := feed.ToRss()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/rss+xml")
 		_, err = w.Write([]byte(rss))
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 	})
@@ -104,8 +104,7 @@ func main() {
 
 		posts, err := listPosts()
 		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
@@ -121,16 +120,14 @@ func main() {
 
 		output, err := xml.MarshalIndent(sitemap, "  ", "    ")
 		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/xml")
 		_, err = w.Write([]byte(xml.Header + string(output)))
 		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			InternalServerError(w, err)
 			return
 		}
 	})
