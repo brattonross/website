@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"encoding/xml"
 	"io/fs"
 	"log"
 	"net/http"
@@ -73,6 +74,62 @@ func main() {
 		w.Header().Set("Content-Type", "application/rss+xml")
 		_, err = w.Write([]byte(rss))
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
+	http.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
+		type Sitemap struct {
+			XMLName xml.Name `xml:"urlset"`
+			Xmlns   string   `xml:"xmlns,attr"`
+			Xsi     string   `xml:"xmlns:xsi,attr"`
+			Schema  string   `xml:"xsi:schemaLocation,attr"`
+			Urls    []struct {
+				Loc string `xml:"loc"`
+			} `xml:"url"`
+		}
+
+		sitemap := Sitemap{
+			Xmlns:  "http://www.sitemaps.org/schemas/sitemap/0.9",
+			Xsi:    "http://www.w3.org/2001/XMLSchema-instance",
+			Schema: "http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd",
+		}
+
+		urls := []string{
+			"https://brattonross.xyz",
+			"https://brattonross.xyz/uses",
+			"https://brattonross.xyz/blog",
+		}
+
+		posts, err := listPosts()
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		for _, post := range posts {
+			urls = append(urls, "https://brattonross.xyz/blog/"+post.Slug)
+		}
+
+		for _, url := range urls {
+			sitemap.Urls = append(sitemap.Urls, struct {
+				Loc string `xml:"loc"`
+			}{url})
+		}
+
+		output, err := xml.MarshalIndent(sitemap, "  ", "    ")
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/xml")
+		_, err = w.Write([]byte(xml.Header + string(output)))
+		if err != nil {
+			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
