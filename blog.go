@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -134,6 +135,11 @@ func RootPage(w http.ResponseWriter) {
 func PostPage(w http.ResponseWriter, slug string) {
 	post, err := postByFileName(slug + ".md")
 	if err != nil {
+		if os.IsNotExist(err) {
+			NotFound(w)
+			return
+		}
+
 		log.Println(err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
