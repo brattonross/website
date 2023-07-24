@@ -4,6 +4,7 @@ import (
 	"embed"
 	"html/template"
 	"net/http"
+	"os"
 )
 
 //go:embed html/*
@@ -11,7 +12,9 @@ var templates embed.FS
 var layoutPath = "html/layout.html"
 
 func ParseTemplates(files ...string) (*template.Template, error) {
-	// TODO: Load from real file system in dev mode
+	if os.Getenv("DEV") == "true" {
+		return template.ParseFiles(files...)
+	}
 	return template.ParseFS(templates, files...)
 }
 

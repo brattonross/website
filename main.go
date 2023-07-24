@@ -26,7 +26,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle("/public/", withCaching(http.StripPrefix("/public/", http.FileServer(http.FS(public)))))
+	http.HandleFunc("/public/", func(w http.ResponseWriter, r *http.Request) {
+		if os.Getenv("DEV") == "true" {
+			http.StripPrefix("/public/", http.FileServer(http.Dir("public"))).ServeHTTP(w, r)
+			return
+		}
+
+		withCaching(http.StripPrefix("/public/", http.FileServer(http.FS(public)))).ServeHTTP(w, r)
+	})
 
 	http.HandleFunc("/blog", BlogRootPage)
 
