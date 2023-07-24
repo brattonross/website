@@ -19,22 +19,22 @@ import (
 //go:embed data/blog/*.md
 var posts embed.FS
 
-// postFrontmatter represents the frontmatter of a blog post.
-type postFrontmatter struct {
+// PostFrontmatter represents the frontmatter of a blog post.
+type PostFrontmatter struct {
 	Title       string
 	Href        string
 	Date        time.Time
 	Description string
 }
 
-type post struct {
+type Post struct {
 	Slug        string
-	Frontmatter postFrontmatter
+	Frontmatter PostFrontmatter
 	Content     []byte
 }
 
 // parsePost parses a blog post from the given reader.
-func parsePost(slug string, r io.Reader) (*post, error) {
+func parsePost(slug string, r io.Reader) (*Post, error) {
 	md, err := markdown.Parse(r)
 	if err != nil {
 		return nil, err
@@ -45,9 +45,9 @@ func parsePost(slug string, r io.Reader) (*post, error) {
 		return nil, err
 	}
 
-	return &post{
+	return &Post{
 		Slug: slug,
-		Frontmatter: postFrontmatter{
+		Frontmatter: PostFrontmatter{
 			Title:       md.Frontmatter["title"],
 			Href:        "/blog/" + slug,
 			Date:        date,
@@ -57,7 +57,7 @@ func parsePost(slug string, r io.Reader) (*post, error) {
 	}, nil
 }
 
-func postByFileName(filename string) (*post, error) {
+func PostByFilename(filename string) (*Post, error) {
 	file, err := posts.Open(filepath.Join("data", "blog", filename))
 	if err != nil {
 		return nil, err
@@ -77,15 +77,15 @@ func postByFileName(filename string) (*post, error) {
 	return post, nil
 }
 
-func listPosts() ([]post, error) {
+func ListPosts() ([]Post, error) {
 	entries, err := posts.ReadDir(filepath.Join("data", "blog"))
 	if err != nil {
 		return nil, err
 	}
 
-	posts := []post{}
+	posts := []Post{}
 	for _, entry := range entries {
-		post, err := postByFileName(entry.Name())
+		post, err := PostByFilename(entry.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -97,13 +97,13 @@ func listPosts() ([]post, error) {
 
 func BlogRootPage(w http.ResponseWriter, r *http.Request) {
 	filePath := "html/blog.html"
-	posts, err := listPosts()
+	posts, err := ListPosts()
 	if err != nil {
 		InternalServerError(w, err)
 		return
 	}
 
-	frontmatters := []postFrontmatter{}
+	frontmatters := []PostFrontmatter{}
 	for _, post := range posts {
 		frontmatters = append(frontmatters, post.Frontmatter)
 	}
@@ -126,7 +126,7 @@ func BlogRootPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostPage(w http.ResponseWriter, r *http.Request, slug string) {
-	post, err := postByFileName(slug + ".md")
+	post, err := PostByFilename(slug + ".md")
 	if err != nil {
 		if os.IsNotExist(err) {
 			NotFound(w, r)

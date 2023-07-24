@@ -5,7 +5,7 @@ import (
 )
 
 func GenerateBlogFeed() (*feeds.Feed, error) {
-	posts, err := listPosts()
+	posts, err := ListPosts()
 	if err != nil {
 		return nil, err
 	}

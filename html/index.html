@@ -8,7 +8,33 @@
     </p>
   </header>
   <section class="flex flex-col gap-4">
-    <h2 class="text-2xl font-bold leading-6">Projects</h2>
+    <div class="flex flex-col gap-1">
+      <h2 class="text-2xl font-bold leading-6">Blog</h2>
+      <p class="text-lg leading-5 text-lo-contrast">The latest from my blog.</p>
+    </div>
+    <ul class="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {{ range .Posts }}
+      <li
+        class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sage-6"
+      >
+        <a
+          class="text-lg leading-6 hover:underline"
+          href="{{ .Frontmatter.Href }}"
+        >
+          {{ .Frontmatter.Title }}
+        </a>
+        <p class="leading-5 text-lo-contrast">{{ .Frontmatter.Description }}</p>
+      </li>
+      {{ end }}
+    </ul>
+  </section>
+  <section class="flex flex-col gap-4">
+    <div class="flex flex-col gap-1">
+      <h2 class="text-2xl font-bold leading-6">Projects</h2>
+      <p class="text-lg leading-5 text-lo-contrast">
+        Some of my open source projects.
+      </p>
+    </div>
     <ul class="grid grid-cols-1 gap-3 md:grid-cols-2">
       <li
         class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sage-6"

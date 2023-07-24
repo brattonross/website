@@ -107,7 +107,7 @@ func main() {
 			"https://brattonross.xyz/blog",
 		}
 
-		posts, err := listPosts()
+		posts, err := ListPosts()
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -168,7 +168,17 @@ func main() {
 			return
 		}
 
-		HomePage(w, r)
+		posts, err := ListPosts()
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		if len(posts) > 5 {
+			posts = posts[:5]
+		}
+
+		HomePage(w, r, posts)
 	})
 
 	port := os.Getenv("PORT")
