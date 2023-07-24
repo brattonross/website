@@ -1,5 +1,5 @@
 {{ define "body" }}
-<div class="mx-auto flex max-w-4xl flex-col gap-y-16 px-4 py-10">
+<div class="mx-auto flex max-w-4xl flex-col gap-y-16 px-4 pt-16 pb-32">
   <header class="flex flex-col gap-4">
     <h1 class="text-4xl font-bold leading-6">Ross Bratton</h1>
     <p class="text-lg leading-5 leading-5 text-lo-contrast">
@@ -7,12 +7,12 @@
       cook, custom keyboard enthusiast.
     </p>
   </header>
-  <section class="flex flex-col gap-4">
+  <section class="flex flex-col items-start gap-4">
     <div class="flex flex-col gap-1">
       <h2 class="text-2xl font-bold leading-6">Blog</h2>
       <p class="text-lg leading-5 text-lo-contrast">The latest from my blog.</p>
     </div>
-    <ul class="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <ul class="w-full grid grid-cols-1 gap-3 md:grid-cols-2">
       {{ range .Posts }}
       <li
         class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sage-6"
@@ -32,6 +32,15 @@
       </li>
       {{ end }}
     </ul>
+    <a
+      class="flex items-center gap-2 leading-6 hover:underline"
+      href="/blog"
+    >
+      View all posts
+      <svg class="w-6 h-6">
+        <use xlink:href="/public/icons/24-outline.svg#arrow-long-right" />
+      </svg>
+    </a>
   </section>
   <section class="flex flex-col gap-4">
     <div class="flex flex-col gap-1">
@@ -115,6 +124,12 @@
         </p>
       </li>
     </ul>
+    <a class="flex items-center gap-2 hover:underline" href="https://github.com/brattonross" target="_blank">
+      Check out more on GitHub
+      <svg class="w-5 h-5">
+        <use xlink:href="/public/icons/20-solid.svg#arrow-up-right" />
+      </svg>
+    </a>
   </section>
 </div>
 {{ end }}
