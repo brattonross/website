@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -18,6 +19,20 @@ import (
 
 //go:embed data/blog/*.md
 var posts embed.FS
+
+func openPost(filename string) (io.ReadCloser, error) {
+	if os.Getenv("DEV") == "true" {
+		return os.Open(filepath.Join("data", "blog", filename))
+	}
+	return posts.Open(filepath.Join("data", "blog", filename))
+}
+
+func readPostsDir() ([]fs.DirEntry, error) {
+	if os.Getenv("DEV") == "true" {
+		return os.ReadDir(filepath.Join("data", "blog"))
+	}
+	return posts.ReadDir(filepath.Join("data", "blog"))
+}
 
 // PostFrontmatter represents the frontmatter of a blog post.
 type PostFrontmatter struct {
@@ -58,7 +73,7 @@ func parsePost(slug string, r io.Reader) (*Post, error) {
 }
 
 func PostByFilename(filename string) (*Post, error) {
-	file, err := posts.Open(filepath.Join("data", "blog", filename))
+	file, err := openPost(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +93,7 @@ func PostByFilename(filename string) (*Post, error) {
 }
 
 func ListPosts() ([]Post, error) {
-	entries, err := posts.ReadDir(filepath.Join("data", "blog"))
+	entries, err := readPostsDir()
 	if err != nil {
 		return nil, err
 	}

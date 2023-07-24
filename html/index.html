@@ -23,6 +23,11 @@
         >
           {{ .Frontmatter.Title }}
         </a>
+        <small class="text-sm leading-5 text-lo-contrast">
+          <time datetime="{{ .Frontmatter.Date.Format "2006-01-02" }}">
+            {{ .Frontmatter.Date.Format "January 2, 2006" }}
+          </time>
+        </small>
         <p class="leading-5 text-lo-contrast">{{ .Frontmatter.Description }}</p>
       </li>
       {{ end }}

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -173,6 +174,10 @@ func main() {
 			InternalServerError(w, err)
 			return
 		}
+
+		sort.Slice(posts, func(i, j int) bool {
+			return posts[i].Frontmatter.Date.After(posts[j].Frontmatter.Date)
+		})
 
 		if len(posts) > 5 {
 			posts = posts[:5]
