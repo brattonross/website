@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -106,6 +107,10 @@ func ListPosts() ([]Post, error) {
 		}
 		posts = append(posts, *post)
 	}
+
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].Frontmatter.Date.After(posts[j].Frontmatter.Date)
+	})
 
 	return posts, nil
 }
