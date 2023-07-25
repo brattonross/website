@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/brattonross/website/internal/theme"
 )
 
 //go:embed all:public
@@ -149,14 +151,13 @@ func main() {
 			return
 		}
 
-		theme := r.Form.Get("theme")
-		if theme == "" {
+		newTheme := r.Form.Get("theme")
+		if newTheme == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		SetTheme(w, theme)
-
+		theme.SetTheme(w, newTheme)
 		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusSeeOther)
 	})
 
