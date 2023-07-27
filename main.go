@@ -63,7 +63,7 @@ func main() {
 	})
 
 	var blogFS *blog.FS
-	if os.Getenv("DEV") == "true" {
+	if isDev {
 		blogFS = blog.NewFS(&devBlogFS{})
 	} else {
 		subs, err := fs.Sub(posts, "data/blog")
@@ -376,7 +376,7 @@ func InternalServerError(w http.ResponseWriter, err error) {
 var layoutPath = "html/layout.html"
 
 func ParseTemplates(files ...string) (*template.Template, error) {
-	if os.Getenv("DEV") == "true" {
+	if isDev {
 		return template.ParseFiles(files...)
 	}
 	return template.ParseFS(templates, files...)
