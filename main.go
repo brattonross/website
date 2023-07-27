@@ -21,14 +21,8 @@ import (
 
 var isDev = os.Getenv("DEV") == "true"
 
-//go:embed all:public
-var public embed.FS
-
-//go:embed data/blog/*.md
-var posts embed.FS
-
-//go:embed html/*
-var templates embed.FS
+//go:embed public data html
+var content embed.FS
 
 type devBlogFS struct{}
 
@@ -48,7 +42,7 @@ func withCaching(h http.Handler) http.Handler {
 }
 
 func main() {
-	public, err := fs.Sub(public, "public")
+	public, err := fs.Sub(content, "public")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +60,7 @@ func main() {
 	if isDev {
 		blogFS = blog.NewFS(&devBlogFS{})
 	} else {
-		subs, err := fs.Sub(posts, "data/blog")
+		subs, err := fs.Sub(content, "data/blog")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -74,7 +68,7 @@ func main() {
 	}
 
 	http.HandleFunc("/blog", func(w http.ResponseWriter, r *http.Request) {
-		filePath := "html/blog.html"
+		filePath := "blog.html"
 		posts, err := blogFS.ReadDir()
 		if err != nil {
 			InternalServerError(w, err)
@@ -127,7 +121,7 @@ func main() {
 
 		tmpl, err := ParseTemplates(
 			layoutPath,
-			"html/blogpost.html",
+			"blogpost.html",
 		)
 		if err != nil {
 			InternalServerError(w, err)
@@ -296,7 +290,7 @@ func main() {
 	})
 
 	http.HandleFunc("/uses", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := ParseTemplates(layoutPath, "html/uses.html")
+		tmpl, err := ParseTemplates(layoutPath, "uses.html")
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -328,7 +322,7 @@ func main() {
 			posts = posts[:5]
 		}
 
-		tmpl, err := ParseTemplates(layoutPath, "html/index.html")
+		tmpl, err := ParseTemplates(layoutPath, "index.html")
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -352,7 +346,7 @@ func main() {
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	tmpl, err := ParseTemplates(layoutPath, "html/404.html")
+	tmpl, err := ParseTemplates(layoutPath, "404.html")
 	if err != nil {
 		InternalServerError(w, err)
 		return
@@ -373,13 +367,20 @@ func InternalServerError(w http.ResponseWriter, err error) {
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-var layoutPath = "html/layout.html"
+var layoutPath = "layout.html"
 
 func ParseTemplates(files ...string) (*template.Template, error) {
 	if isDev {
+		for i, file := range files {
+			files[i] = filepath.Join("html", file)
+		}
 		return template.ParseFiles(files...)
 	}
-	return template.ParseFS(templates, files...)
+	html, err := fs.Sub(content, "html")
+	if err != nil {
+		return nil, err
+	}
+	return template.ParseFS(html, files...)
 }
 
 func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl *template.Template, data map[string]interface{}) error {
