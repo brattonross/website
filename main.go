@@ -10,6 +10,9 @@ import (
 	"strings"
 
 	"github.com/brattonross/website/internal/theme"
+	gomd "github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 )
 
 //go:embed all:public
@@ -37,11 +40,82 @@ func main() {
 		withCaching(http.StripPrefix("/public/", http.FileServer(http.FS(public)))).ServeHTTP(w, r)
 	})
 
-	http.HandleFunc("/blog", BlogRootPage)
+	http.HandleFunc("/blog", func(w http.ResponseWriter, r *http.Request) {
+		filePath := "html/blog.html"
+		posts, err := ListPosts()
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		frontmatters := []PostFrontmatter{}
+		for _, post := range posts {
+			frontmatters = append(frontmatters, post.Frontmatter)
+		}
+
+		tmpl, err := ParseTemplates(layoutPath, filePath)
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+			"Description": "Ross Bratton's blog",
+			"Posts":       frontmatters,
+			"Title":       "Blog",
+		})
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+	})
 
 	http.HandleFunc("/blog/", func(w http.ResponseWriter, r *http.Request) {
 		slug := strings.TrimPrefix(r.URL.Path, "/blog/")
-		PostPage(w, r, slug)
+		post, err := PostByFilename(slug + ".md")
+		if err != nil {
+			if os.IsNotExist(err) {
+				NotFound(w, r)
+				return
+			}
+
+			InternalServerError(w, err)
+			return
+		}
+
+		parser := parser.NewWithExtensions(parser.CommonExtensions | parser.AutoHeadingIDs)
+		doc := parser.Parse(post.Content)
+
+		renderer := html.NewRenderer(html.RendererOptions{
+			Flags: html.CommonFlags | html.HrefTargetBlank,
+		})
+
+		bs := gomd.Render(doc, renderer)
+
+		tmpl, err := ParseTemplates(
+			layoutPath,
+			"html/blogpost.html",
+		)
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		tmpl, err = tmpl.Parse("{{define \"content\"}}" + string(bs) + "{{end}}")
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+			"Description": post.Frontmatter.Description,
+			"Post":        post.Frontmatter,
+			"Title":       post.Frontmatter.Title,
+		})
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
 	})
 
 	http.HandleFunc("/blog.json", func(w http.ResponseWriter, r *http.Request) {
