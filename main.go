@@ -179,7 +179,19 @@ func main() {
 			posts = posts[:5]
 		}
 
-		HomePage(w, r, posts)
+		tmpl, err := ParseTemplates(layoutPath, "html/index.html")
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+			"Posts": posts,
+		})
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
 	})
 
 	port := os.Getenv("PORT")
