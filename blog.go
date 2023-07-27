@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/brattonross/website/markdown"
+	"github.com/brattonross/website/internal/markdown"
 )
 
 //go:embed data/blog/*.md
