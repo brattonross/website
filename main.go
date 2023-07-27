@@ -7,16 +7,34 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/brattonross/website/internal/blog"
 	"github.com/brattonross/website/internal/theme"
 	gomd "github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/gorilla/feeds"
 )
+
+var isDev = os.Getenv("DEV") == "true"
 
 //go:embed all:public
 var public embed.FS
+
+//go:embed data/blog/*.md
+var posts embed.FS
+
+type devBlogFS struct{}
+
+func (f *devBlogFS) Open(name string) (fs.File, error) {
+	return os.Open(filepath.Join("data", "blog", name))
+}
+
+func (f *devBlogFS) ReadDir(name string) ([]fs.DirEntry, error) {
+	return os.ReadDir(filepath.Join("data", "blog", name))
+}
 
 func withCaching(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -32,7 +50,7 @@ func main() {
 	}
 
 	http.HandleFunc("/public/", func(w http.ResponseWriter, r *http.Request) {
-		if os.Getenv("DEV") == "true" {
+		if isDev {
 			http.StripPrefix("/public/", http.FileServer(http.Dir("public"))).ServeHTTP(w, r)
 			return
 		}
@@ -40,15 +58,26 @@ func main() {
 		withCaching(http.StripPrefix("/public/", http.FileServer(http.FS(public)))).ServeHTTP(w, r)
 	})
 
+	var blogFS *blog.FS
+	if os.Getenv("DEV") == "true" {
+		blogFS = blog.NewFS(&devBlogFS{})
+	} else {
+		subs, err := fs.Sub(posts, "data/blog")
+		if err != nil {
+			log.Fatal(err)
+		}
+		blogFS = blog.NewFS(subs.(fs.ReadDirFS))
+	}
+
 	http.HandleFunc("/blog", func(w http.ResponseWriter, r *http.Request) {
 		filePath := "html/blog.html"
-		posts, err := ListPosts()
+		posts, err := blogFS.ReadDir()
 		if err != nil {
 			InternalServerError(w, err)
 			return
 		}
 
-		frontmatters := []PostFrontmatter{}
+		frontmatters := []blog.PostFrontmatter{}
 		for _, post := range posts {
 			frontmatters = append(frontmatters, post.Frontmatter)
 		}
@@ -72,7 +101,7 @@ func main() {
 
 	http.HandleFunc("/blog/", func(w http.ResponseWriter, r *http.Request) {
 		slug := strings.TrimPrefix(r.URL.Path, "/blog/")
-		post, err := PostByFilename(slug + ".md")
+		post, err := blogFS.Open(slug + ".md")
 		if err != nil {
 			if os.IsNotExist(err) {
 				NotFound(w, r)
@@ -118,8 +147,35 @@ func main() {
 		}
 	})
 
+	generateBlogFeed := func() (*feeds.Feed, error) {
+		posts, err := blogFS.ReadDir()
+		if err != nil {
+			return nil, err
+		}
+
+		feed := &feeds.Feed{
+			Title:       "Ross Bratton - Blog",
+			Link:        &feeds.Link{Href: "https://brattonross.xyz/blog"},
+			Description: "Ross Bratton's blog",
+			Author:      &feeds.Author{Name: "Ross Bratton", Email: "bratton.ross@gmail.com"},
+			Created:     posts[0].Frontmatter.Date,
+		}
+
+		for _, post := range posts {
+			feed.Items = append(feed.Items, &feeds.Item{
+				Id:          post.Slug,
+				Title:       post.Frontmatter.Title,
+				Link:        &feeds.Link{Href: "https://brattonross.xyz" + post.Frontmatter.Href},
+				Description: post.Frontmatter.Description,
+				Created:     post.Frontmatter.Date,
+			})
+		}
+
+		return feed, nil
+	}
+
 	http.HandleFunc("/blog.json", func(w http.ResponseWriter, r *http.Request) {
-		feed, err := GenerateBlogFeed()
+		feed, err := generateBlogFeed()
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -140,7 +196,7 @@ func main() {
 	})
 
 	http.HandleFunc("/blog/rss.xml", func(w http.ResponseWriter, r *http.Request) {
-		feed, err := GenerateBlogFeed()
+		feed, err := generateBlogFeed()
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -183,7 +239,7 @@ func main() {
 			"https://brattonross.xyz/blog",
 		}
 
-		posts, err := ListPosts()
+		posts, err := blogFS.ReadDir()
 		if err != nil {
 			InternalServerError(w, err)
 			return
@@ -243,7 +299,7 @@ func main() {
 			return
 		}
 
-		posts, err := ListPosts()
+		posts, err := blogFS.ReadDir()
 		if err != nil {
 			InternalServerError(w, err)
 			return

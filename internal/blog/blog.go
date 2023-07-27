@@ -1,11 +1,9 @@
-package main
+package blog
 
 import (
-	"embed"
 	"io"
 	"io/fs"
 	"log"
-	"os"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -13,23 +11,6 @@ import (
 
 	"github.com/brattonross/website/internal/markdown"
 )
-
-//go:embed data/blog/*.md
-var posts embed.FS
-
-func openPost(filename string) (io.ReadCloser, error) {
-	if os.Getenv("DEV") == "true" {
-		return os.Open(filepath.Join("data", "blog", filename))
-	}
-	return posts.Open(filepath.Join("data", "blog", filename))
-}
-
-func readPostsDir() ([]fs.DirEntry, error) {
-	if os.Getenv("DEV") == "true" {
-		return os.ReadDir(filepath.Join("data", "blog"))
-	}
-	return posts.ReadDir(filepath.Join("data", "blog"))
-}
 
 // PostFrontmatter represents the frontmatter of a blog post.
 type PostFrontmatter struct {
@@ -39,13 +20,13 @@ type PostFrontmatter struct {
 	Description string
 }
 
+// Post represents a blog post.
 type Post struct {
 	Slug        string
 	Frontmatter PostFrontmatter
 	Content     []byte
 }
 
-// parsePost parses a blog post from the given reader.
 func parsePost(slug string, r io.Reader) (*Post, error) {
 	md, err := markdown.Parse(r)
 	if err != nil {
@@ -69,8 +50,19 @@ func parsePost(slug string, r io.Reader) (*Post, error) {
 	}, nil
 }
 
-func PostByFilename(filename string) (*Post, error) {
-	file, err := openPost(filename)
+// FS represents a blog using a filesystem.
+type FS struct {
+	fs fs.ReadDirFS
+}
+
+// NewFS creates a new blog using the given filesystem.
+func NewFS(fs fs.ReadDirFS) *FS {
+	return &FS{fs: fs}
+}
+
+// Open opens the blog post with the given filename.
+func (fs *FS) Open(filename string) (*Post, error) {
+	file, err := fs.fs.Open(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -89,15 +81,16 @@ func PostByFilename(filename string) (*Post, error) {
 	return post, nil
 }
 
-func ListPosts() ([]Post, error) {
-	entries, err := readPostsDir()
+// ReadDir reads the blog posts from the filesystem.
+func (fs *FS) ReadDir() ([]Post, error) {
+	entries, err := fs.fs.ReadDir(".")
 	if err != nil {
 		return nil, err
 	}
 
 	posts := []Post{}
 	for _, entry := range entries {
-		post, err := PostByFilename(entry.Name())
+		post, err := fs.Open(entry.Name())
 		if err != nil {
 			return nil, err
 		}
