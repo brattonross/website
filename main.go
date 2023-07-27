@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"encoding/xml"
+	"html/template"
 	"io/fs"
 	"log"
 	"net/http"
@@ -25,6 +26,9 @@ var public embed.FS
 
 //go:embed data/blog/*.md
 var posts embed.FS
+
+//go:embed html/*
+var templates embed.FS
 
 type devBlogFS struct{}
 
@@ -291,7 +295,22 @@ func main() {
 		http.Redirect(w, r, r.Header.Get("Referer"), http.StatusSeeOther)
 	})
 
-	http.HandleFunc("/uses", UsesPage)
+	http.HandleFunc("/uses", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, err := ParseTemplates(layoutPath, "html/uses.html")
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+
+		err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+			"Description": "Stuff that I use on a daily basis.",
+			"Title":       "Uses",
+		})
+		if err != nil {
+			InternalServerError(w, err)
+			return
+		}
+	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" && r.URL.Path != "/index.html" {
@@ -329,4 +348,49 @@ func main() {
 		port = "3000"
 	}
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func NotFound(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	tmpl, err := ParseTemplates(layoutPath, "html/404.html")
+	if err != nil {
+		InternalServerError(w, err)
+		return
+	}
+
+	err = RenderTemplate(w, r, tmpl, map[string]interface{}{
+		"Description": "Page not found",
+		"Title":       "Not Found",
+	})
+	if err != nil {
+		InternalServerError(w, err)
+		return
+	}
+}
+
+func InternalServerError(w http.ResponseWriter, err error) {
+	log.Println(err)
+	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+}
+
+var layoutPath = "html/layout.html"
+
+func ParseTemplates(files ...string) (*template.Template, error) {
+	if os.Getenv("DEV") == "true" {
+		return template.ParseFiles(files...)
+	}
+	return template.ParseFS(templates, files...)
+}
+
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl *template.Template, data map[string]interface{}) error {
+	if data == nil {
+		data = map[string]interface{}{}
+	}
+
+	theme := theme.GetTheme(r)
+	if theme != "" {
+		data["Theme"] = theme
+	}
+
+	return tmpl.ExecuteTemplate(w, "layout", data)
 }
