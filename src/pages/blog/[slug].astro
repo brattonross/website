@@ -1,0 +1,27 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const slug = Astro.params.slug;
+if (!slug) {
+	return Astro.redirect("/404");
+}
+
+const entry = await getEntry("blog", slug);
+if (!entry) {
+	return Astro.redirect("/404");
+}
+
+const { Content } = await entry.render();
+---
+
+<BaseLayout>
+	<div class="mx-auto flex max-w-4xl flex-col gap-4 px-4 py-10">
+		<h1 class="text-4xl font-bold leading-6">{entry.data.title}</h1>
+		<article
+			class="prose prose-sage max-w-none prose-headings:text-hi-contrast prose-p:text-hi-contrast"
+		>
+			<Content />
+		</article>
+	</div>
+</BaseLayout>

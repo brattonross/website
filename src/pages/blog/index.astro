@@ -1,0 +1,43 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+const posts = await getCollection("blog");
+---
+
+<BaseLayout>
+	<div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10">
+		<div class="flex flex-col gap-y-4">
+			<h1 class="text-4xl font-bold leading-6">Blog</h1>
+			<p class="text-lg leading-5 text-lo-contrast">
+				Thoughts and ramblings.
+			</p>
+		</div>
+		<section>
+			<ul class="flex flex-col gap-4">
+				{
+					posts.map((post) => (
+						<li class="inline-flex flex-col">
+							<a
+								href={"/blog/" + post.slug}
+								class="text-xl transition-colors hover:underline"
+							>
+								{post.data.title}
+							</a>
+							<date datetime={post.data.date.toISOString()}>
+								{post.data.date.toLocaleDateString("en-GB", {
+									year: "numeric",
+									month: "long",
+									day: "numeric",
+								})}
+							</date>
+							<p class="text-lo-contrast">
+								{post.data.description}
+							</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+	</div>
+</BaseLayout>
