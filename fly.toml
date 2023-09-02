@@ -1,10 +1,6 @@
 app = "brattonross"
 primary_region = "lhr"
 
-[env]
-HOST = "0.0.0.0"
-PORT = 8080
-
 [http_service]
   internal_port = 8080
   force_https = true
