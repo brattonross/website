@@ -11,6 +11,7 @@ FROM oven/bun as base
 WORKDIR /app
 COPY --from=build /app/dist/ .
 
+ENV HOST=0.0.0.0
 ENV PORT=8080
 EXPOSE 8080
 
