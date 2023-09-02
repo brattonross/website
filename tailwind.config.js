@@ -91,8 +91,6 @@ export default {
 			colors: {
 				jade: radix.jade,
 				jadeDark: radix.jadeDark,
-				grass: radix.grass,
-				grassDark: radix.grassDark,
 				sage: radix.sage,
 				sageDark: radix.sageDark,
 				sand: radix.sand,
@@ -101,7 +99,7 @@ export default {
 		}),
 		require("@tailwindcss/typography"),
 		require("windy-radix-typography")({
-			colors: ["jade", "sage"],
+			colors: ["sage"],
 		}),
 	],
 };
