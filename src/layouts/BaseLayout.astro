@@ -1,15 +1,24 @@
 ---
-import { ViewTransitions } from "astro:transitions";
+import ThemeSelect from "~/components/theme-select.astro";
 import "~/tailwind.css";
 
 export type Props = {
 	title?: string;
 	description?: string;
 };
+
+const cookie = Astro.cookies.get("brattonross_theme");
 ---
 
-<!doctype html>
-<html lang="en" class="h-full antialiased">
+<html
+	class:list={["h-full antialiased", {
+		dark: cookie?.value === "dark",
+	}]}
+	lang="en" 
+	style={{
+		"color-scheme": cookie?.value === "dark" ? "dark light" : "light dark",
+	}}
+>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
@@ -34,7 +43,17 @@ export type Props = {
 			content={Astro.props.description ??
 				"Software Engineer based in Bristol, UK."}
 		/>
-		<ViewTransitions />
+		<script src="htmx.org"></script>
+		{!cookie?.value || cookie.value === "auto" ? (
+			<script>
+				if (
+					window.matchMedia?.("(prefers-color-scheme: dark)").matches
+				) {
+					document.documentElement.classList.add("dark");
+					document.documentElement.style.colorScheme = "dark light";
+				}
+			</script>
+		) : null}
 	</head>
 	<body
 		class="flex h-full flex-col bg-sand-2 text-hi-contrast selection:bg-grass-7 selection:text-hi-contrast dark:bg-sage-1"
@@ -48,25 +67,7 @@ export type Props = {
 					<a class="hover:underline" href="/blog">Blog</a>
 					<a class="hover:underline" href="/uses">Uses</a>
 				</nav>
-				<form
-					id="theme-form"
-					action="/theme"
-					method="POST"
-					class="flex items-center justify-center"
-				>
-					<input type="hidden" name="theme" />
-					<button
-						aria-label="Switch to light dark theme"
-						class="flex items-center justify-center rounded-full p-2 text-hi-contrast ring-2 ring-sage-7 transition-colors hover:ring-hi-contrast focus:outline-none focus:ring-hi-contrast active:ring-hi-contrast"
-						type="submit"
-					>
-						<svg class="h-6 w-6">
-							<use
-								xlink:href="/icons/24-outline.svg#moon /icons/24-outline.svg#sun"
-							></use>
-						</svg>
-					</button>
-				</form>
+				<ThemeSelect />
 			</div>
 		</header>
 		<main class="flex-1">

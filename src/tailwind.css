@@ -23,8 +23,6 @@
 	--text-lo-contrast: hsl(var(--sand11));
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--text-hi-contrast: #d3c6aa;
-	}
+.dark {
+	--text-hi-contrast: #d3c6aa;
 }

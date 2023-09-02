@@ -1,0 +1,32 @@
+---
+if (Astro.request.method !== "POST") {
+	return new Response(null, { status: 405 });
+}
+
+const formData = await Astro.request.formData();
+const theme = formData.get("theme")?.toString() ?? "auto";
+
+if (!["light", "dark", "auto"].includes(theme)) {
+	return new Response("Invalid theme", { status: 400 });
+}
+
+Astro.response.headers.set(
+	"Set-Cookie",
+	"brattonross_theme=" +
+		theme +
+		"; path=/; secure; httponly; samesite=lax; max-age=315360000;",
+);
+---
+
+<svg
+	aria-hidden="true"
+	class="pointer-events-none absolute left-2 top-1/2 h-5 w-5 -translate-y-1/2"
+>
+	<use
+		href={"/icons/20-solid.svg#" +
+			{
+				auto: "computer-desktop",
+				light: "sun",
+				dark: "moon",
+			}[theme]}></use>
+</svg>
