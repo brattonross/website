@@ -1,23 +1,15 @@
 ---
-const cookie = Astro.cookies.get("brattonross_theme");
-const theme = cookie?.value ?? "auto";
+import { THEMES, THEME_KEY, getThemeOrDefault, humanizeTheme } from "~/theme";
+import ThemeIcon from "./theme-icon.astro";
+
+const cookie = Astro.cookies.get(THEME_KEY);
+const currentTheme = getThemeOrDefault(cookie?.value);
 ---
 
 <form>
 	<label class="relative flex items-center gap-2">
 		<span class="sr-only">Select theme</span>
-		<svg
-			aria-hidden="true"
-			class="pointer-events-none absolute left-2 top-1/2 h-5 w-5 -translate-y-1/2"
-		>
-			<use
-				href={"/icons/20-solid.svg#" +
-					{
-						auto: "computer-desktop",
-						light: "sun",
-						dark: "moon",
-					}[theme]}></use>
-		</svg>
+		<ThemeIcon variant={currentTheme} />
 		<select
 			class="bg-sand-2 py-1.5 pl-9 pr-2.5 dark:bg-sage-1"
 			name="theme"
@@ -28,9 +20,13 @@ const theme = cookie?.value ?? "auto";
 			document.documentElement.classList.toggle('dark', this.value === 'dark' || (this.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
 			"
 		>
-			<option value="auto" selected={theme === "auto"}>Auto</option>
-			<option value="light" selected={theme === "light"}>Light</option>
-			<option value="dark" selected={theme === "dark"}>Dark</option>
+			{
+				THEMES.map((theme) => (
+					<option value={theme} selected={currentTheme === theme}>
+						{humanizeTheme(theme)}
+					</option>
+				))
+			}
 		</select>
 	</label>
 </form>

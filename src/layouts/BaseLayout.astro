@@ -1,5 +1,6 @@
 ---
 import ThemeSelect from "~/components/theme-select.astro";
+import { THEME_KEY } from "~/theme";
 import "~/tailwind.css";
 
 export type Props = {
@@ -7,7 +8,7 @@ export type Props = {
 	description?: string;
 };
 
-const cookie = Astro.cookies.get("brattonross_theme");
+const cookie = Astro.cookies.get(THEME_KEY);
 ---
 
 <html
