@@ -1,0 +1,36 @@
+---
+const cookie = Astro.cookies.get("brattonross_theme");
+const theme = cookie?.value ?? "auto";
+---
+
+<form>
+	<label class="relative flex items-center gap-2">
+		<span class="sr-only">Select theme</span>
+		<svg
+			aria-hidden="true"
+			class="pointer-events-none absolute left-2 top-1/2 h-5 w-5 -translate-y-1/2"
+		>
+			<use
+				href={"/icons/20-solid.svg#" +
+					{
+						auto: "computer-desktop",
+						light: "sun",
+						dark: "moon",
+					}[theme]}></use>
+		</svg>
+		<select
+			class="bg-sand-2 py-1.5 pl-9 pr-2.5 dark:bg-sage-1"
+			name="theme"
+			hx-post="/theme"
+			hx-target="previous svg"
+			hx-swap="outerHTML"
+			onchange="
+			document.documentElement.classList.toggle('dark', this.value === 'dark' || (this.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
+			"
+		>
+			<option value="auto" selected={theme === "auto"}>Auto</option>
+			<option value="light" selected={theme === "light"}>Light</option>
+			<option value="dark" selected={theme === "dark"}>Dark</option>
+		</select>
+	</label>
+</form>

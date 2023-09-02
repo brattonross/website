@@ -4,18 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "bun run generate:css --minify",
-    "dev": "bun run generate:css --watch",
-    "format": "prettier --write . --ignore-path .gitignore --plugin-search-dir=.",
-    "generate:css": "tailwindcss -i ./tailwind.css -o ./public/style.css"
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "format": "prettier --ignore-path .gitignore --write ."
   },
   "devDependencies": {
-    "@radix-ui/colors": "^1.0.1",
+    "@astrojs/node": "^6.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "@radix-ui/colors": "^2.1.0",
     "@tailwindcss/typography": "^0.5.9",
-    "prettier": "^3.0.0",
-    "prettier-plugin-tailwindcss": "^0.4.1",
+    "astro": "^3.0.7",
+    "prettier": "^3.0.3",
+    "prettier-plugin-astro": "^0.12.0",
+    "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
     "windy-radix-palette": "^0.6.1",
     "windy-radix-typography": "^0.2.1"
+  },
+  "dependencies": {
+    "htmx.org": "^1.9.5"
   }
 }

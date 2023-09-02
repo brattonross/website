@@ -1,0 +1,95 @@
+---
+import ThemeSelect from "~/components/theme-select.astro";
+import "~/tailwind.css";
+
+export type Props = {
+	title?: string;
+	description?: string;
+};
+
+const cookie = Astro.cookies.get("brattonross_theme");
+---
+
+<html
+	class:list={["h-full antialiased", {
+		dark: cookie?.value === "dark",
+	}]}
+	lang="en" 
+	style={{
+		"color-scheme": cookie?.value === "dark" ? "dark light" : "light dark",
+	}}
+>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+		<link rel="icon" href="/favicon.ico" />
+		<link
+			rel="preload"
+			href="/fonts/Atkinson-Hyperlegible-Regular-102a.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="preload"
+			href="/fonts/Atkinson-Hyperlegible-Bold-102a.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin="anonymous"
+		/>
+		<title>{Astro.props.title ?? "Ross Bratton"}</title>
+		<meta
+			name="description"
+			content={Astro.props.description ??
+				"Software Engineer based in Bristol, UK."}
+		/>
+		<script src="htmx.org"></script>
+		{!cookie?.value || cookie.value === "auto" ? (
+			<script>
+				if (
+					window.matchMedia?.("(prefers-color-scheme: dark)").matches
+				) {
+					document.documentElement.classList.add("dark");
+					document.documentElement.style.colorScheme = "dark light";
+				}
+			</script>
+		) : null}
+	</head>
+	<body
+		class="flex h-full flex-col bg-sand-2 text-hi-contrast selection:bg-grass-7 selection:text-hi-contrast dark:bg-sage-1"
+	>
+		<header class="flex items-center border-b border-sage-6">
+			<div
+				class="mx-auto flex w-full max-w-4xl items-center gap-6 px-4 py-6"
+			>
+				<nav class="flex flex-1 items-center gap-6">
+					<a class="hover:underline" href="/">Home</a>
+					<a class="hover:underline" href="/blog">Blog</a>
+					<a class="hover:underline" href="/uses">Uses</a>
+				</nav>
+				<ThemeSelect />
+			</div>
+		</header>
+		<main class="flex-1">
+			<slot />
+		</main>
+		<footer class="border-t border-sage-6 text-lo-contrast">
+			<div class="mx-auto flex max-w-4xl items-center px-4 py-6">
+				<div class="flex flex-1 gap-2 text-sm">
+					<a
+						class="hover:underline"
+						href="https://twitter.com/brattonross">Twitter</a
+					>
+					 &bull;
+					<a
+						class="hover:underline"
+						href="https://github.com/brattonross">GitHub</a
+					>
+					 &bull;
+					<a class="hover:underline" href="/blog/rss.xml">RSS</a>
+				</div>
+				<p class="text-xs">© Ross Bratton 2023</p>
+			</div>
+		</footer>
+	</body>
+</html>
