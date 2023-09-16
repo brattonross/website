@@ -1,5 +1,6 @@
 import * as radix from "@radix-ui/colors";
 import defaultTheme from "tailwindcss/defaultTheme";
+import { alias } from "windy-radix-palette";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -10,13 +11,10 @@ export default {
 			colors: {
 				"hi-contrast": "var(--text-hi-contrast)",
 				"lo-contrast": "var(--text-lo-contrast)",
-				"focus-ring": "hsl(var(--jade9))",
+				"focus-ring": alias("jade", 9),
 			},
 			fontFamily: {
-				sans: [
-					"Atkinson Hyperlegible",
-					...defaultTheme.fontFamily.sans,
-				],
+				sans: ["Atkinson Hyperlegible", ...defaultTheme.fontFamily.sans],
 			},
 			// Based on https://github.com/radix-ui/themes/blob/main/packages/radix-ui-themes/src/styles/tokens/typography.css
 			fontSize: {

@@ -19,8 +19,8 @@
 }
 
 :root {
-	--text-hi-contrast: hsl(var(--sand12));
-	--text-lo-contrast: hsl(var(--sand11));
+	--text-hi-contrast: rgb(var(--sand12));
+	--text-lo-contrast: rgb(var(--sand11));
 }
 
 .dark {
