@@ -10,7 +10,7 @@ export default {
 		extend: {
 			colors: {
 				"hi-contrast": "var(--text-hi-contrast)",
-				"lo-contrast": "var(--text-lo-contrast)",
+				"lo-contrast": alias("sand", 11),
 				"focus-ring": alias("jade", 9),
 			},
 			fontFamily: {

@@ -17,12 +17,3 @@
 	font-style: normal;
 	font-display: swap;
 }
-
-:root {
-	--text-hi-contrast: rgb(var(--sand12));
-	--text-lo-contrast: rgb(var(--sand11));
-}
-
-.dark {
-	--text-hi-contrast: #d3c6aa;
-}
