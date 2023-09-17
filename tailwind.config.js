@@ -1,4 +1,3 @@
-import * as radix from "@radix-ui/colors";
 import defaultTheme from "tailwindcss/defaultTheme";
 import { alias } from "windy-radix-palette";
 
@@ -85,19 +84,8 @@ export default {
 		},
 	},
 	plugins: [
-		require("windy-radix-palette")({
-			colors: {
-				jade: radix.jade,
-				jadeDark: radix.jadeDark,
-				sage: radix.sage,
-				sageDark: radix.sageDark,
-				sand: radix.sand,
-				sandDark: radix.sandDark,
-			},
-		}),
+		require("windy-radix-palette"),
 		require("@tailwindcss/typography"),
-		require("windy-radix-typography")({
-			colors: ["sage"],
-		}),
+		require("windy-radix-typography"),
 	],
 };

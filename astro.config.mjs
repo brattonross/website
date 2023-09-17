@@ -12,4 +12,5 @@ export default defineConfig({
 		}),
 	],
 	output: "server",
+	site: "https://brattonross.xyz",
 });
