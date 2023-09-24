@@ -57,9 +57,10 @@ const cookie = Astro.cookies.get(THEME_KEY);
 		) : null}
 	</head>
 	<body
-		class="[--text-hi-contrast:rgb(var(--sand12))] dark:[--text-hi-contrast:#d3c6aa] flex h-full flex-col bg-sand-2 text-base font-normal text-hi-contrast selection:bg-jade-8 selection:text-hi-contrast dark:bg-sage-1"
+		class="[--text-hi-contrast:rgb(var(--sand12))] dark:[--text-hi-contrast:#d3c6aa] flex h-full flex-col bg-sand-2 text-base font-normal text-hi-contrast selection:bg-lime-8 selection:text-hi-contrast dark:bg-sand-1"
+		hx-boost="true"
 	>
-		<header class="flex items-center border-b border-sage-6">
+		<header class="flex items-center border-b border-sand-6">
 			<div
 				class="mx-auto flex w-full max-w-4xl items-center gap-6 px-4 py-6"
 			>
@@ -74,7 +75,7 @@ const cookie = Astro.cookies.get(THEME_KEY);
 		<main class="flex-1">
 			<slot />
 		</main>
-		<footer class="border-t border-sage-6 text-lo-contrast">
+		<footer class="border-t border-sand-6 text-lo-contrast">
 			<div class="mx-auto flex max-w-4xl items-center px-4 py-6">
 				<div class="flex flex-1 gap-2 text-sm">
 					<a

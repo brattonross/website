@@ -11,7 +11,7 @@ const currentTheme = getThemeOrDefault(cookie?.value);
 		<span class="sr-only">Select theme</span>
 		<ThemeIcon variant={currentTheme} />
 		<select
-			class="bg-sand-2 py-1.5 pl-9 pr-2.5 dark:bg-sage-1"
+			class="bg-sand-2 py-1.5 pl-9 pr-2.5 dark:bg-sand-1"
 			name="theme"
 			hx-post="/theme"
 			hx-target="previous svg"

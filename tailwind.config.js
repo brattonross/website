@@ -83,9 +83,5 @@ export default {
 			},
 		},
 	},
-	plugins: [
-		require("windy-radix-palette"),
-		require("@tailwindcss/typography"),
-		require("windy-radix-typography"),
-	],
+	plugins: [require("windy-radix-palette"), require("@tailwindcss/typography")],
 };
