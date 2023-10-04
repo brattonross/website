@@ -3,17 +3,39 @@
 @tailwind utilities;
 
 @font-face {
-	font-family: "Atkinson Hyperlegible";
-	src: url("/fonts/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2");
-	font-weight: normal;
-	font-style: normal;
-	font-display: swap;
+  font-family: "Atkinson Hyperlegible";
+  src: url("/fonts/Atkinson-Hyperlegible-Regular-102a.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-	font-family: "Atkinson Hyperlegible";
-	src: url("/fonts/Atkinson-Hyperlegible-Bold-102a.woff2") format("woff2");
-	font-weight: bold;
-	font-style: normal;
-	font-display: swap;
+  font-family: "Atkinson Hyperlegible";
+  src: url("/fonts/Atkinson-Hyperlegible-Bold-102a.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+	--text-hi-contrast: theme("colors.sand.12");
+}
+
+.dark {
+	--text-hi-contrast: #d3c6aa;
+}
+
+a {
+	text-decoration: underline;
+}
+
+h1 {
+	font-size: theme("fontSize.4xl");
+	font-weight: theme("fontWeight.bold");
+}
+
+h2 {
+	font-size: theme("fontSize.2xl");
+	font-weight: theme("fontWeight.bold");
 }

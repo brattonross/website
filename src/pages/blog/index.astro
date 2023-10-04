@@ -6,23 +6,26 @@ const posts = await getCollection("blog");
 ---
 
 <BaseLayout>
-	<div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-10">
-		<div class="flex flex-col gap-y-4">
-			<h1 class="text-4xl font-bold">Blog</h1>
+	<div class="mx-auto max-w-4xl space-y-6 px-4 py-10">
+		<div class="space-y-4">
+			<h1>Blog</h1>
 			<p class="text-lg text-lo-contrast">Thoughts and ramblings.</p>
 		</div>
 		<section>
-			<ul class="flex flex-col gap-4">
+			<ul class="flex flex-col gap-8">
 				{
 					posts.map((post) => (
-						<li class="inline-flex flex-col">
+						<li class="flex flex-col items-start">
 							<a
+								class="text-xl transition-colors"
 								href={"/blog/" + post.slug}
-								class="text-xl transition-colors hover:underline"
 							>
 								{post.data.title}
 							</a>
-							<date datetime={post.data.date.toISOString()}>
+							<date
+								class="text-sm text-lo-contrast"
+								datetime={post.data.date.toISOString()}
+							>
 								{post.data.date.toLocaleDateString("en-GB", {
 									year: "numeric",
 									month: "long",

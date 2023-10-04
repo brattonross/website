@@ -57,17 +57,17 @@ const cookie = Astro.cookies.get(THEME_KEY);
 		) : null}
 	</head>
 	<body
-		class="[--text-hi-contrast:rgb(var(--sand12))] dark:[--text-hi-contrast:#d3c6aa] flex h-full flex-col bg-sand-2 text-base font-normal text-hi-contrast selection:bg-lime-8 selection:text-hi-contrast dark:bg-sand-1"
+		class="flex h-full flex-col bg-grayA-2 text-base font-normal text-hi-contrast selection:text-white selection:bg-lime-8 selection:text-hi-contrast dark:bg-sandA-1"
 		hx-boost="true"
 	>
-		<header class="flex items-center border-b border-sand-6">
+		<header class="flex items-center shadow-b shadow-grayA-6">
 			<div
 				class="mx-auto flex w-full max-w-4xl items-center gap-6 px-4 py-6"
 			>
 				<nav class="flex flex-1 items-center gap-6">
-					<a class="hover:underline" href="/">Home</a>
-					<a class="hover:underline" href="/blog">Blog</a>
-					<a class="hover:underline" href="/uses">Uses</a>
+					<a href="/">Home</a>
+					<a href="/blog">Blog</a>
+					<a href="/uses">Uses</a>
 				</nav>
 				<ThemeSelect />
 			</div>
@@ -75,20 +75,18 @@ const cookie = Astro.cookies.get(THEME_KEY);
 		<main class="flex-1">
 			<slot />
 		</main>
-		<footer class="border-t border-sand-6 text-lo-contrast">
+		<footer class="shadow-t shadow-grayA-6 text-lo-contrast">
 			<div class="mx-auto flex max-w-4xl items-center px-4 py-6">
 				<div class="flex flex-1 gap-2 text-sm">
 					<a
-						class="hover:underline"
 						href="https://twitter.com/brattonross">Twitter</a
 					>
 					 &bull;
 					<a
-						class="hover:underline"
 						href="https://github.com/brattonross">GitHub</a
 					>
 					 &bull;
-					<a class="hover:underline" href="/blog/rss.xml">RSS</a>
+					<a href="/blog/rss.xml">RSS</a>
 				</div>
 				<p class="text-xs">© Ross Bratton 2023</p>
 			</div>
