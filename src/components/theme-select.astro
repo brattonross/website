@@ -6,27 +6,60 @@ const cookie = Astro.cookies.get(THEME_KEY);
 const currentTheme = getThemeOrDefault(cookie?.value);
 ---
 
-<form>
-	<label class="relative flex items-center gap-2">
-		<span class="sr-only">Select theme</span>
-		<ThemeIcon variant={currentTheme} />
-		<select
-			class="bg-sand-2 py-1.5 pl-9 pr-2.5 dark:bg-sand-1"
-			name="theme"
-			hx-post="/theme"
-			hx-target="previous svg"
-			hx-swap="outerHTML"
-			onchange="
-			document.documentElement.classList.toggle('dark', this.value === 'dark' || (this.value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches));
-			"
-		>
-			{
-				THEMES.map((theme) => (
-					<option value={theme} selected={currentTheme === theme}>
-						{humanizeTheme(theme)}
-					</option>
-				))
-			}
-		</select>
-	</label>
+<form action="/theme" data-theme-select method="post">
+	<fieldset class="flex items-center gap-2">
+		{
+		THEMES.map((theme) => (
+			<label
+				for={`theme-${theme}`}
+				class="flex h-7 w-7 items-center justify-center rounded [&:has(input:checked)]:bg-grayA-4 text-grayA-10 [&:has(input:checked)]:text-hi-contrast hover:bg-grayA-3 active:bg-grayA-4",
+				>
+				<ThemeIcon variant={theme} />
+				<input
+					id={`theme-${theme}`}
+					checked={theme === currentTheme}
+					hidden
+					hx-post="/theme"
+					hx-trigger="change"
+					hx-swap="none"
+					name="theme"
+					type="radio"
+					value={theme}
+				/>
+				<span class="sr-only">{humanizeTheme(theme)}</span>
+			</label>
+		))
+		}
+	</fieldset>
 </form>
+
+<script>
+	if (document.readyState === "complete") {
+		init();
+	} else {
+		document.addEventListener("DOMContentLoaded", init);
+	}
+
+	function init() {
+		const root = document.querySelector("[data-theme-select]");
+		if (!root) {
+			return;
+		}
+
+		const fieldset = root.querySelector("fieldset");
+		if (!fieldset) {
+			return;
+		}
+
+		fieldset.addEventListener("change", (event) => {
+			const input = event.target as HTMLInputElement | null;
+			const theme = input?.value;
+			if (!theme) {
+				return;
+			}
+
+			const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+			document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "auto" && prefersDark));
+		});
+	}
+</script>
