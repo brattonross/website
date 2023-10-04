@@ -1,4 +1,5 @@
-FROM oven/bun as build
+FROM oven/bun:latest
+
 WORKDIR /app
 
 COPY . .
