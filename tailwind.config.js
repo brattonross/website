@@ -1,5 +1,5 @@
 import defaultTheme from "tailwindcss/defaultTheme";
-import { alias } from "windy-radix-palette";
+import radix, { alias } from "windy-radix-palette";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -22,5 +22,5 @@ export default {
 			},
 		},
 	},
-	plugins: [require("windy-radix-palette"), require("@tailwindcss/typography")],
+	plugins: [radix, require("@tailwindcss/typography")],
 };
