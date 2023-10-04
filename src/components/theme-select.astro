@@ -39,26 +39,36 @@ const currentTheme = getThemeOrDefault(cookie?.value);
 		document.addEventListener("DOMContentLoaded", init);
 	}
 
+	document.addEventListener("htmx:beforeSwap", (event) => {
+		const el = (event as any).detail?.elt;
+		if (!el.contains(document.querySelector("[data-theme-select]"))) {
+			return;
+		}
+
+		document.querySelector("[data-theme-select]")?.querySelector("fieldset")?.removeEventListener("change", handleChange);
+	})
+
+	document.addEventListener("htmx:afterSwap", (event) => {
+		const el = (event as any).detail?.elt;
+		if (!el.contains(document.querySelector("[data-theme-select]"))) {
+			return;
+		}
+
+		init();
+	});
+
 	function init() {
-		const root = document.querySelector("[data-theme-select]");
-		if (!root) {
+		document.querySelector("[data-theme-select]")?.querySelector("fieldset")?.addEventListener("change", handleChange);
+	}
+
+	function handleChange(event: Event) {
+		const input = event.target as HTMLInputElement | null;
+		const theme = input?.value;
+		if (!theme) {
 			return;
 		}
 
-		const fieldset = root.querySelector("fieldset");
-		if (!fieldset) {
-			return;
-		}
-
-		fieldset.addEventListener("change", (event) => {
-			const input = event.target as HTMLInputElement | null;
-			const theme = input?.value;
-			if (!theme) {
-				return;
-			}
-
-			const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-			document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "auto" && prefersDark));
-		});
+		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "auto" && prefersDark));
 	}
 </script>
