@@ -52,9 +52,9 @@ Htmx also has the bonus of working with any server-side that you want, which the
 
 When I think about building web applications, I naturally come to the conclusion that I should be using hypermedia. I've described my thought processes above, but to sum it up:
 
-- I believe that the devs building the front-end should own a BFF for their front-end
-- If you own the API for your application;
-  - Why would you want to duplicate logic between the client and server? Keep the logic on the server and use hypermedia as the engine of application state (HATEOAS)
-  - Why would we want to communicate between the client and server with JSON, when the browser is better at consuming HTML?
-- In the majority of cases, we probably don't need complex client-side JS, most likely we can get by with forms and progressive enhancement
-- There are limitations to plain HTML, so enhancing our abilities using libraries like htmx and Alpine can give users a much better experience
+-   I believe that the devs building the front-end should own a BFF for their front-end
+-   If you own the API for your application;
+    -   Why would you want to duplicate logic between the client and server? Keep the logic on the server and use hypermedia as the engine of application state (HATEOAS)
+    -   Why would we want to communicate between the client and server with JSON, when the browser is better at consuming HTML?
+-   In the majority of cases, we probably don't need complex client-side JS, most likely we can get by with forms and progressive enhancement
+-   There are limitations to plain HTML, so enhancing our abilities using libraries like htmx and Alpine can give users a much better experience

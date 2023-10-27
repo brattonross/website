@@ -5,7 +5,12 @@
 		"baseUrl": ".",
 		"exactOptionalPropertyTypes": false,
 		"paths": {
-			"~/*": ["src/*"]
-		}
+			"~/*": [
+				"src/*"
+			]
+		},
+		"types": [
+			"bun-types"
+		]
 	}
 }

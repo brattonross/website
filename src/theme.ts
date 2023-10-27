@@ -1,6 +1,6 @@
 export const THEMES = ["auto", "light", "dark"] as const;
 
-export type Theme = typeof THEMES[number];
+export type Theme = (typeof THEMES)[number];
 
 export function isTheme(theme: unknown): theme is Theme {
 	return THEMES.includes(theme as Theme);
