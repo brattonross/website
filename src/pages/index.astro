@@ -27,10 +27,7 @@ const posts = await getCollection("blog").then((posts) =>
 				{
 					posts.map((post) => (
 						<li class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6">
-							<a
-								class="text-lg hover:underline"
-								href={"/blog/" + post.slug}
-							>
+							<a class="text-lg" href={"/blog/" + post.slug}>
 								{post.data.title}
 							</a>
 							<small class="text-sm text-lo-contrast">
@@ -52,7 +49,7 @@ const posts = await getCollection("blog").then((posts) =>
 					))
 				}
 			</ul>
-			<a class="flex items-center gap-2 hover:underline" href="/blog">
+			<a class="flex items-center gap-2" href="/blog">
 				View all posts
 				<svg class="h-6 w-6">
 					<use xlink:href="/icons/24-outline.svg#arrow-long-right"
@@ -72,7 +69,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/windy-radix-palette"
 					>
 						windy-radix-palette
@@ -85,7 +82,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/website">website</a
 					>
 					<p class="text-lo-contrast">This website.</p>
@@ -94,7 +91,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/sprites">sprites</a
 					>
 					<p class="text-lo-contrast">
@@ -106,7 +103,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/ghostedbot"
 						>ghostedbot</a
 					>
@@ -119,7 +116,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/dotfiles"
 						>dotfiles</a
 					>
@@ -129,7 +126,7 @@ const posts = await getCollection("blog").then((posts) =>
 					class="flex flex-col items-start gap-1 rounded-xl p-4 ring-1 ring-inset ring-sand-6"
 				>
 					<a
-						class="text-lg hover:underline"
+						class="text-lg"
 						href="https://github.com/brattonross/vite-plugin-voie"
 					>
 						vite-plugin-voie
@@ -141,7 +138,7 @@ const posts = await getCollection("blog").then((posts) =>
 				</li>
 			</ul>
 			<a
-				class="flex items-center gap-2 hover:underline"
+				class="flex items-center gap-2"
 				href="https://github.com/brattonross"
 				target="_blank"
 			>

@@ -18,6 +18,10 @@
 	font-display: swap;
 }
 
+a:hover {
+	text-decoration: underline;
+}
+
 h1 {
 	font-size: theme("fontSize.4xl");
 	font-weight: theme("fontWeight.bold");
