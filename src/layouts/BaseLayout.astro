@@ -17,7 +17,7 @@ const cookie = Astro.cookies.get(THEME_KEY);
 	}]}
 	lang="en" 
 	style={{
-		"color-scheme": "dark light"
+		"color-scheme": cookie?.value === "dark" ? "dark light" : "light dark",
 	}}
 >
 	<head>
@@ -52,6 +52,9 @@ const cookie = Astro.cookies.get(THEME_KEY);
 				) {
 					document.documentElement.classList.add("dark");
 					document.documentElement.style.colorScheme = "dark light";
+				} else {
+					document.documentElement.classList.remove("dark");
+					document.documentElement.style.colorScheme = "light dark";
 				}
 			</script>
 		) : null}

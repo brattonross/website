@@ -6,8 +6,8 @@ const cookie = Astro.cookies.get(THEME_KEY);
 const currentTheme = getThemeOrDefault(cookie?.value);
 ---
 
-<form action="/theme" data-theme-select method="post">
-	<fieldset class="flex items-center gap-2">
+<form action="/theme" method="post">
+	<fieldset is="theme-select" class="flex items-center gap-2">
 		{
 		THEMES.map((theme) => (
 			<label
@@ -31,44 +31,5 @@ const currentTheme = getThemeOrDefault(cookie?.value);
 		}
 	</fieldset>
 </form>
+<script src="./theme-select.ts"></script>
 
-<script>
-	if (document.readyState === "complete") {
-		init();
-	} else {
-		document.addEventListener("DOMContentLoaded", init);
-	}
-
-	document.addEventListener("htmx:beforeSwap", (event) => {
-		const el = (event as any).detail?.elt;
-		if (!el.contains(document.querySelector("[data-theme-select]"))) {
-			return;
-		}
-
-		document.querySelector("[data-theme-select]")?.querySelector("fieldset")?.removeEventListener("change", handleChange);
-	})
-
-	document.addEventListener("htmx:afterSwap", (event) => {
-		const el = (event as any).detail?.elt;
-		if (!el.contains(document.querySelector("[data-theme-select]"))) {
-			return;
-		}
-
-		init();
-	});
-
-	function init() {
-		document.querySelector("[data-theme-select]")?.querySelector("fieldset")?.addEventListener("change", handleChange);
-	}
-
-	function handleChange(event: Event) {
-		const input = event.target as HTMLInputElement | null;
-		const theme = input?.value;
-		if (!theme) {
-			return;
-		}
-
-		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-		document.documentElement.classList.toggle("dark", theme === "dark" || (theme === "auto" && prefersDark));
-	}
-</script>
