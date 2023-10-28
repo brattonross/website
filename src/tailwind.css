@@ -22,12 +22,21 @@ a:hover {
 	text-decoration: underline;
 }
 
-h1 {
-	font-size: theme("fontSize.4xl");
-	font-weight: theme("fontWeight.bold");
-}
+.container {
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	max-width: theme("screens.lg");
+	padding-left: theme("spacing.4");
+	padding-right: theme("spacing.4");
 
-h2 {
-	font-size: theme("fontSize.3xl");
-	font-weight: theme("fontWeight.bold");
+	@media (min-width: theme("screens.md")) {
+		padding-left: theme("spacing.6");
+		padding-right: theme("spacing.6");
+	}
+
+	@media (min-width: theme("screens.lg")) {
+		padding-left: theme("spacing.8");
+		padding-right: theme("spacing.8");
+	}
 }

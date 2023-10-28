@@ -62,7 +62,7 @@ const cookie = Astro.cookies.get(THEME_KEY);
 	>
 		<header class="flex items-center shadow-b shadow-grayA-6">
 			<div
-				class="mx-auto flex w-full max-w-4xl items-center gap-6 px-4 py-6"
+				class="flex items-center gap-6 container py-6"
 			>
 				<nav class="flex flex-1 items-center gap-6">
 					<a href="/">Home</a>
@@ -76,7 +76,7 @@ const cookie = Astro.cookies.get(THEME_KEY);
 			<slot />
 		</main>
 		<footer class="shadow-t shadow-grayA-6 text-lo-contrast">
-			<div class="mx-auto flex max-w-4xl items-center px-4 py-6">
+			<div class="flex items-center container py-6">
 				<div class="flex flex-1 gap-2 text-sm">
 					<a
 						href="https://twitter.com/brattonross">Twitter</a
