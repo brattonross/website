@@ -12,8 +12,8 @@ const currentTheme = getThemeOrDefault(cookie?.value);
 		THEMES.map((theme) => (
 			<label
 				for={`theme-${theme}`}
-				class="flex h-7 w-7 items-center justify-center rounded [&:has(input:checked)]:bg-grayA-4 text-grayA-10 [&:has(input:checked)]:text-hi-contrast hover:bg-grayA-3 active:bg-grayA-4",
-				>
+				class="flex h-8 w-8 items-center justify-center rounded [&:has(input:checked)]:bg-grayA-4 text-grayA-10 [&:has(input:checked)]:text-hi-contrast hover:bg-grayA-3 active:bg-grayA-4",
+			>
 				<ThemeIcon variant={theme} />
 				<input
 					id={`theme-${theme}`}
