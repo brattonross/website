@@ -1,6 +1,7 @@
 ---
-import ThemeIcon from "~/components/theme-icon.astro";
 import { THEME_KEY, getThemeOrDefault } from "~/theme";
+
+export const partial = true;
 
 if (Astro.request.method !== "POST") {
 	return new Response(null, { status: 405 });
@@ -19,5 +20,3 @@ Astro.response.headers.set(
 	].join(""),
 );
 ---
-
-<ThemeIcon variant={theme} />
