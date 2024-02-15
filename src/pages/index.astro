@@ -62,7 +62,7 @@ const projects = [
 			>
 				{
 					posts.map((post) => (
-						<li class="flex flex-col items-start gap-1 rounded-md px-4 py-3 ring-1 ring-inset ring-sand-6">
+						<li class="flex flex-col items-start gap-1 rounded-md px-4 py-3 ring-1 ring-inset ring-gray-6">
 							<a href={"/blog/" + post.slug}>{post.data.title}</a>
 							<small class="text-xs text-lo-contrast">
 								<time datetime={post.data.date.toISOString()}>
@@ -100,7 +100,7 @@ const projects = [
 			>
 				{
 					projects.map((project) => (
-						<li class="flex flex-col items-start gap-1 rounded-md px-4 py-3 ring-1 ring-inset ring-sand-6">
+						<li class="flex flex-col items-start gap-1 rounded-md px-4 py-3 ring-1 ring-inset ring-gray-6">
 							<a href={project.url}>{project.title}</a>
 							<p class="text-sm text-lo-contrast">
 								{project.description}
