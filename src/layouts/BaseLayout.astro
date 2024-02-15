@@ -48,7 +48,7 @@ const cookie = Astro.cookies.get(THEME_KEY);
 		{!cookie?.value || cookie.value === "auto" ? (
 			<script>
 				if (
-					window.matchMedia?.("(prefers-color-scheme: dark)").matches
+					window.matchMedia("(prefers-color-scheme: dark)").matches
 				) {
 					document.documentElement.classList.add("dark");
 					document.documentElement.style.colorScheme = "dark light";

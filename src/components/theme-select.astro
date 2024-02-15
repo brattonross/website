@@ -9,27 +9,26 @@ const currentTheme = getThemeOrDefault(cookie?.value);
 <form action="/theme" method="post">
 	<fieldset is="theme-select" class="flex items-center gap-2">
 		{
-		THEMES.map((theme) => (
-			<label
-				for={`theme-${theme}`}
-				class="flex h-8 w-8 items-center justify-center rounded [&:has(input:checked)]:bg-grayA-4 text-grayA-10 [&:has(input:checked)]:text-hi-contrast hover:bg-grayA-3 active:bg-grayA-4",
-			>
-				<ThemeIcon variant={theme} />
-				<input
-					id={`theme-${theme}`}
-					checked={theme === currentTheme}
-					hidden
-					hx-post="/theme"
-					hx-trigger="change"
-					name="theme"
-					type="radio"
-					value={theme}
-				/>
-				<span class="sr-only">{humanizeTheme(theme)}</span>
-			</label>
-		))
+			THEMES.map((theme) => (
+				<label
+					for={`theme-${theme}`}
+					class="flex h-8 w-8 items-center justify-center rounded text-grayA-10 hover:bg-grayA-3 active:bg-grayA-4 [&:has(input:checked)]:bg-grayA-4 [&:has(input:checked)]:text-hi-contrast"
+				>
+					<ThemeIcon variant={theme} />
+					<input
+						id={`theme-${theme}`}
+						checked={theme === currentTheme}
+						hidden
+						hx-post="/theme"
+						hx-trigger="change"
+						name="theme"
+						type="radio"
+						value={theme}
+					/>
+					<span class="sr-only">{humanizeTheme(theme)}</span>
+				</label>
+			))
 		}
 	</fieldset>
 </form>
 <script src="./theme-select.ts"></script>
-
