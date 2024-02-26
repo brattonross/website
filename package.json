@@ -1,27 +1,16 @@
 {
 	"$schema": "https://json.schemastore.org/package.json",
+	"private": true,
 	"name": "website",
-	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"build": "astro build",
-		"dev": "astro dev",
-		"preview": "astro preview",
-		"format": "prettier --write --ignore-path .gitignore ."
-	},
-	"dependencies": {
-		"@astrojs/node": "^8.2.0",
-		"@astrojs/rss": "^4.0.5",
-		"@astrojs/tailwind": "^5.1.0",
-		"astro": "4.3.7",
-		"htmx.org": "^2.0.0-alpha2"
+		"build": "tailwindcss -i styles.css -o public/styles.css",
+		"format": "prettier --write ."
 	},
 	"devDependencies": {
 		"@radix-ui/colors": "^3.0.0",
 		"@tailwindcss/typography": "^0.5.10",
-		"@types/bun": "^1.0.5",
 		"prettier": "^3.2.5",
-		"prettier-plugin-astro": "^0.13.0",
 		"prettier-plugin-tailwindcss": "^0.5.11",
 		"tailwindcss": "^3.4.1"
 	}

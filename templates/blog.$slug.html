@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" class="h-full">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/styles.css" />
+		<link rel="icon" href="/favicon.ico" />
+		<script>
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+				document.documentElement.classList.add("dark");
+			}
+		</script>
+		<title>{{.Article.Title}} &mdash; Ross Bratton</title>
+	</head>
+	<body
+		class="flex h-full flex-col bg-white font-serif text-base font-normal text-gray-12 antialiased selection:bg-teal-a5 selection:text-teal-12 dark:bg-gray-2"
+	>
+		<main
+			class="mx-auto w-full max-w-3xl flex-1 px-4 py-16 md:px-6 lg:px-8"
+		>
+			<article>
+				<h1 class="text-xl font-semibold">{{.Article.Title}}</h1>
+				<time
+					class="text-gray-11"
+					datetime='{{.Article.Date.Format "2006-01-02"}}'
+					>{{.Article.Date.Format "2006-01-02"}}</time
+				>
+				<div
+					class="prose prose-gray mt-12 max-w-none prose-headings:text-gray-12 prose-p:text-gray-12 prose-a:text-gray-12 prose-a:decoration-gray-a7 prose-a:transition-colors prose-blockquote:border-gray-a5 prose-code:text-gray-12 prose-pre:bg-gray-a3 prose-li:text-gray-12 marker:prose-li:text-gray-a10"
+				>
+					{{.Article.Content}}
+				</div>
+			</article>
+		</main>
+		<footer
+			class="text-xs text-gray-11 shadow-[inset_0_1px_theme(colors.gray.a4)]"
+		>
+			<div class="mx-auto w-full max-w-3xl px-4 py-2.5 md:px-6 lg:px-8">
+				&copy; 2024 Ross Bratton
+			</div>
+		</footer>
+	</body>
+</html>

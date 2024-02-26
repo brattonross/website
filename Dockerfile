@@ -1,13 +1,21 @@
-FROM oven/bun:1-slim
+FROM oven/bun:latest as client
 
 WORKDIR /app
-
 COPY . .
 
-RUN bun install
+RUN bun install --frozen-lockfile
 RUN bun run build
+
+FROM golang:1.22 as server
+
+WORKDIR /app
+COPY . .
+
+RUN go build -o server
+
+COPY --from=client /app/public/styles.css /app/public/styles.css
 
 ENV HOST=0.0.0.0
 ENV PORT=8080
 EXPOSE 8080
-CMD ["bun", "run", "./dist/server/entry.mjs"]
+ENTRYPOINT ["./server"]

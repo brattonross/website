@@ -2,7 +2,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ["./src/**/*.astro"],
+	content: ["./templates/*.html"],
 	darkMode: "class",
 	theme: {
 		container: {
@@ -41,14 +41,37 @@ export default {
 					a11: "var(--gray-a11)",
 					a12: "var(--gray-a12)",
 				},
+				teal: {
+					1: "var(--teal-1)",
+					2: "var(--teal-2)",
+					3: "var(--teal-3)",
+					4: "var(--teal-4)",
+					5: "var(--teal-5)",
+					6: "var(--teal-6)",
+					7: "var(--teal-7)",
+					8: "var(--teal-8)",
+					9: "var(--teal-9)",
+					10: "var(--teal-10)",
+					11: "var(--teal-11)",
+					12: "var(--teal-12)",
+					a1: "var(--teal-a1)",
+					a2: "var(--teal-a2)",
+					a3: "var(--teal-a3)",
+					a4: "var(--teal-a4)",
+					a5: "var(--teal-a5)",
+					a6: "var(--teal-a6)",
+					a7: "var(--teal-a7)",
+					a8: "var(--teal-a8)",
+					a9: "var(--teal-a9)",
+					a10: "var(--teal-a10)",
+					a11: "var(--teal-a11)",
+					a12: "var(--teal-a12)",
+				},
 				"hi-contrast": "var(--gray-12)",
 				"lo-contrast": "var(--gray-11)",
 			},
 			fontFamily: {
-				sans: [
-					"Atkinson Hyperlegible",
-					...defaultTheme.fontFamily.sans,
-				],
+				serif: ["Bitter", ...defaultTheme.fontFamily.serif],
 			},
 			fontSize: {
 				// https://github.com/radix-ui/themes/blob/main/packages/radix-ui-themes/src/styles/tokens/typography.css
