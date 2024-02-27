@@ -4,8 +4,16 @@
 	"name": "website",
 	"type": "module",
 	"scripts": {
-		"build": "tailwindcss -i styles.css -o public/styles.css",
+		"build": "bun run build:js --minify & bun run build:css --minify",
+		"build:js": "bun build main.js --outdir public",
+		"build:css": "tailwindcss -i styles.css -o public/styles.css",
+		"dev": "bun run dev:js & bun run dev:css",
+		"dev:js": "bun run build:js --watch",
+		"dev:css": "bun run build:css --watch",
 		"format": "prettier --write ."
+	},
+	"dependencies": {
+		"htmx.org": "2.0.0-alpha2"
 	},
 	"devDependencies": {
 		"@radix-ui/colors": "^3.0.0",

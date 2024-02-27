@@ -21,7 +21,7 @@ func main() {
 
 	http.Handle("GET /", http.FileServer(http.Dir("public")))
 	http.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.ParseFiles("templates/index.html")
+		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/index.tmpl")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -84,7 +84,7 @@ func main() {
 			Articles: articles,
 		}
 
-		tmpl, err := template.ParseFiles("templates/blog.html")
+		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/blog.tmpl")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -150,7 +150,7 @@ func main() {
 			},
 		}
 
-		tmpl, err := template.ParseFiles("templates/blog.$slug.html")
+		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/blog.$slug.tmpl")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -161,7 +161,7 @@ func main() {
 		}
 	})
 	http.HandleFunc("GET /uses", func(w http.ResponseWriter, r *http.Request) {
-		tmpl, err := template.ParseFiles("templates/uses.html")
+		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/uses.tmpl")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

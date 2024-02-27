@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" class="h-full">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/styles.css" />
+		<link rel="icon" href="/favicon.ico" />
+		<script>
+			if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+				document.documentElement.classList.add("dark");
+			}
+		</script>
+		<script src="/main.js" type="module"></script>
+		<title>{{template "title" .}} &mdash; Ross Bratton</title>
+	</head>
+	<body
+		class="flex flex-col h-full font-serif text-base antialiased font-normal bg-white text-gray-12 selection:bg-teal-a5 selection:text-teal-12 dark:bg-gray-2"
+		hx-boost="true"
+	>
+		{{template "content" .}}
+		<footer
+			class="text-xs text-gray-11 shadow-[inset_0_1px_theme(colors.gray.a4)]"
+		>
+			<div class="py-2.5 px-4 mx-auto w-full max-w-3xl md:px-6 lg:px-8">
+				&copy; 2024 Ross Bratton
+			</div>
+		</footer>
+	</body>
+</html>

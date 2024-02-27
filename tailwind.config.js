@@ -2,7 +2,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ["./templates/*.html"],
+	content: ["./templates/*.tmpl"],
 	darkMode: "class",
 	theme: {
 		container: {

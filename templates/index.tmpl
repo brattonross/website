@@ -1,0 +1,74 @@
+{{define "title"}}Home{{end}}
+
+{{define "content"}}
+<main class="flex-1 py-16 px-4 mx-auto w-full max-w-3xl md:px-6 lg:px-8">
+	<h1 class="text-lg font-semibold">Ross Bratton</h1>
+	<p class="text-gray-11">
+		Software Engineer, aspiring home cook, guitarist, keyboard enthusiast.
+		Improving healthcare for patients and clinicians alike at
+		<a
+			class="underline transition-colors duration-200 decoration-gray-a7"
+			href="https://www.healthhero.com"
+			rel="noopener noreferrer"
+			target="_blank"
+			>HealthHero</a
+		>.
+	</p>
+	<div class="flex gap-x-3 items-center py-8">
+		<a
+			href="https://github.com/brattonross"
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			<svg
+				class="w-4 h-4 transition-colors duration-200 text-gray-a10 hover:text-gray-a12"
+			>
+				<title>GitHub</title>
+				<use href="/svg/icons.svg#github"></use>
+			</svg>
+		</a>
+		<a
+			href="https://x.com/brattonross"
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			<svg
+				class="w-4 h-4 transition-colors duration-200 text-gray-a10 hover:text-gray-a12"
+			>
+				<title>X</title>
+				<use href="/svg/icons.svg#x"></use>
+			</svg>
+		</a>
+	</div>
+	<nav class="space-y-1">
+		<a
+			class="flex gap-x-4 justify-between items-center py-1.5 px-2.5 -mx-2.5 rounded-md hover:no-underline hover:bg-gray-a2"
+			href="/blog"
+		>
+			<div>
+				<div class="font-medium">Blog</div>
+				<div class="text-sm text-gray-a11">
+					Occasionally I write down my thoughts
+				</div>
+			</div>
+			<svg aria-hidden="true" class="w-5 h-5 text-gray-a10">
+				<use href="/svg/icons.svg#arrow-long-right"></use>
+			</svg>
+		</a>
+		<a
+			class="flex gap-x-4 justify-between items-center py-1.5 px-2.5 -mx-2.5 rounded-md hover:no-underline hover:bg-gray-a2"
+			href="/uses"
+		>
+			<div>
+				<div class="font-medium">Uses</div>
+				<div class="text-sm text-gray-a11">
+					Software, hardware, and tools that I use on a daily basis
+				</div>
+			</div>
+			<svg aria-hidden="true" class="w-5 h-5 text-gray-a10">
+				<use href="/svg/icons.svg#arrow-long-right"></use>
+			</svg>
+		</a>
+	</nav>
+</main>
+{{end}}

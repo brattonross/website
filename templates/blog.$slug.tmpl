@@ -1,0 +1,19 @@
+{{define "title"}}{{.Article.Title}}{{end}}
+
+{{define "content"}}
+<main class="flex-1 py-16 px-4 mx-auto w-full max-w-3xl md:px-6 lg:px-8">
+	<article>
+		<h1 class="text-xl font-semibold">{{.Article.Title}}</h1>
+		<time
+			class="text-gray-11"
+			datetime='{{.Article.Date.Format "2006-01-02"}}'
+			>{{.Article.Date.Format "2006-01-02"}}</time
+		>
+		<div
+			class="mt-12 max-w-none prose prose-gray prose-headings:text-gray-12 prose-p:text-gray-12 prose-a:text-gray-12 prose-a:decoration-gray-a7 prose-a:transition-colors prose-blockquote:border-gray-a5 prose-code:text-gray-12 prose-pre:bg-gray-a3 prose-li:text-gray-12 marker:prose-li:text-gray-a10"
+		>
+			{{.Article.Content}}
+		</div>
+	</article>
+</main>
+{{end}}
