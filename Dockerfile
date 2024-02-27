@@ -13,6 +13,7 @@ COPY . .
 
 RUN go build -o server
 
+COPY --from=client /app/public/main.js /app/public/main.js
 COPY --from=client /app/public/styles.css /app/public/styles.css
 
 ENV HOST=0.0.0.0
