@@ -159,5 +159,5 @@
 	--color-lo-contrast: var(--color-gray-11);
 	--color-hi-contrast: var(--color-gray-12);
 
-	--font-family-mono: "GeistMonoVF", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	--font-family-mono: "GeistMonoVF", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }

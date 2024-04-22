@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
@@ -14,47 +15,92 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
+	env := parseEnv()
+	s := newServer()
+
+	http.Handle("GET /", http.FileServer(http.Dir("public")))
+	http.HandleFunc("GET /{$}", s.handleHomePage())
+	http.HandleFunc("GET /blog", s.handleBlogPage())
+	http.HandleFunc("GET /blog/{slug}", s.handleBlogPostPage())
+	http.HandleFunc("GET /uses", s.handleUsesPage())
+
+	s.logger.Info("Server listening at http://localhost:" + env.port)
+	return http.ListenAndServe(":"+env.port, nil)
+}
+
+type env struct {
+	port string
+}
+
+func parseEnv() *env {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
+	return &env{port}
+}
 
-	http.Handle("GET /", http.FileServer(http.Dir("public")))
-	http.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+type server struct {
+	logger *slog.Logger
+}
+
+func newServer() *server {
+	return &server{
+		logger: slog.Default(),
+	}
+}
+
+type handlerFunc func(w http.ResponseWriter, r *http.Request) error
+
+func (s *server) handle(fn handlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := fn(w, r); err != nil {
+			http.Error(w, "unexpected error", http.StatusInternalServerError)
+		}
+	}
+}
+
+func (s *server) handleHomePage() http.HandlerFunc {
+	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/index.tmpl")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
-
-		if err := tmpl.Execute(w, nil); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		return tmpl.Execute(w, nil)
 	})
-	http.HandleFunc("GET /blog", func(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *server) handleBlogPage() http.HandlerFunc {
+	type article struct {
+		Title       string
+		Description string
+		Slug        string
+		Date        time.Time
+	}
+	type data struct {
+		Articles []article
+	}
+	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
 		files, err := os.ReadDir("content/blog")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
 
-		type Article struct {
-			Title       string
-			Description string
-			Slug        string
-			Date        time.Time
-		}
-
-		articles := make([]Article, 0, len(files))
+		as := make([]article, 0, len(files))
 		for _, file := range files {
-			article, err := os.ReadFile("content/blog/" + file.Name())
+			a, err := os.ReadFile("content/blog/" + file.Name())
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				return err
 			}
 
 			frontmatter := make(map[string]string)
-			for i, line := range strings.Split(string(article), "\n") {
+			for i, line := range strings.Split(string(a), "\n") {
 				if i == 0 {
 					continue
 				}
@@ -67,10 +113,9 @@ func main() {
 
 			date, err := time.Parse("2006-01-02", frontmatter["date"])
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				return err
 			}
-			articles = append(articles, Article{
+			as = append(as, article{
 				Title:       frontmatter["title"],
 				Description: frontmatter["description"],
 				Date:        date,
@@ -78,39 +123,33 @@ func main() {
 			})
 		}
 
-		data := struct {
-			Articles []Article
-		}{
-			Articles: articles,
-		}
-
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/blog.tmpl")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
-
-		if err := tmpl.Execute(w, data); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		return tmpl.Execute(w, data{Articles: as})
 	})
-	http.HandleFunc("GET /blog/{slug}", func(w http.ResponseWriter, r *http.Request) {
-		slug := r.PathValue("slug")
-		type Article struct {
-			Title   string
-			Date    time.Time
-			Content string
-		}
+}
 
-		article, err := os.ReadFile("content/blog/" + slug + ".md")
+func (s *server) handleBlogPostPage() http.HandlerFunc {
+	type article struct {
+		Title   string
+		Date    time.Time
+		Content string
+	}
+	type data struct {
+		Article article
+	}
+	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
+		slug := r.PathValue("slug")
+		a, err := os.ReadFile("content/blog/" + slug + ".md")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
 
 		frontmatter := make(map[string]string)
 		i := -1
-		for _, line := range strings.Split(string(article), "\n") {
+		for _, line := range strings.Split(string(a), "\n") {
 			i++
 			if i == 0 {
 				continue
@@ -124,7 +163,7 @@ func main() {
 			frontmatter[parts[0]] = strings.TrimSpace(parts[1])
 		}
 
-		content := strings.Join(strings.Split(string(article), "\n")[i+1:], "\n")
+		content := strings.Join(strings.Split(string(a), "\n")[i+1:], "\n")
 		extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 		p := parser.NewWithExtensions(extensions)
 		doc := p.Parse([]byte(content))
@@ -137,41 +176,29 @@ func main() {
 
 		date, err := time.Parse("2006-01-02", frontmatter["date"])
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		data := struct {
-			Article Article
-		}{
-			Article: Article{
-				Title:   frontmatter["title"],
-				Date:    date,
-				Content: content,
-			},
+			return err
 		}
 
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/blog.$slug.tmpl")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
-
-		if err := tmpl.Execute(w, data); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		return tmpl.Execute(w, data{
+			Article: article{
+				Title:   frontmatter["title"],
+				Date:    date,
+				Content: content,
+			},
+		})
 	})
-	http.HandleFunc("GET /uses", func(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *server) handleUsesPage() http.HandlerFunc {
+	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/uses.tmpl")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return err
 		}
-
-		if err := tmpl.Execute(w, nil); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		return tmpl.Execute(w, nil)
 	})
-
-	log.Println("Server listening at http://localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
