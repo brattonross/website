@@ -4,7 +4,8 @@ WORKDIR /app
 COPY . .
 
 RUN bun install --frozen-lockfile
-RUN make build-client
+RUN bun build main.js --outdir public
+RUN bun tailwindcss -i styles.css -o public/styles.css
 
 FROM golang:1.22 as server
 
