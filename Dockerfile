@@ -11,7 +11,7 @@ FROM golang:1.22 as server
 WORKDIR /app
 COPY . .
 
-RUN make build-server
+RUN go build -o ./bin/server ./main.go
 
 FROM alpine:3.19
 
