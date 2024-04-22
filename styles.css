@@ -1,6 +1,4 @@
 @import "tailwindcss";
-/* @import "tailwindcss/preflight" layer(base); */
-/* @import "tailwindcss/utilities" layer(utilities); */
 
 @import "@radix-ui/colors/gray.css";
 @import "@radix-ui/colors/gray-alpha.css";
@@ -14,13 +12,20 @@
 
 @layer base {
 	@font-face {
-		font-family: "Bitter";
-		src: url("/fonts/Bitter-VariableFont_wght.ttf") format("truetype");
+		font-family: "GeistVF";
+		src: url("/fonts/GeistVF.woff2") format("woff2"), url("/fonts/GeistVF.woff") format("woff");
 		font-optical-sizing: auto;
 		font-weight: 100 900;
 		font-style: normal;
 		font-display: swap;
-		font-variation-settings: "wdth" 100;
+	}
+	@font-face {
+		font-family: "GeistMonoVF";
+		src: url("/fonts/GeistMonoVF.woff2") format("woff2"), url("/fonts/GeistMonoVF.woff") format("woff");
+		font-optical-sizing: auto;
+		font-weight: 100 900;
+		font-style: normal;
+		font-display: swap;
 	}
 
 	button {
@@ -54,7 +59,7 @@
 			position: relative;
 
 			&::before {
-				background-color: var(--color-gray-a10);
+				background-color: var(--color-gray-a5);
 				bottom: 0;
 				content: "";
 				height: 100%;
@@ -76,7 +81,7 @@
 
 		h2 {
 			margin-bottom: var(--spacing-2);
-			margin-top: var(--spacing-5);
+			margin-top: var(--spacing-9);
 		}
 
 		h1, h2, h3, h4, h5, h6 {
@@ -154,5 +159,5 @@
 	--color-lo-contrast: var(--color-gray-11);
 	--color-hi-contrast: var(--color-gray-12);
 
-	--font-family-serif: "Bitter", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+	--font-family-mono: "GeistMonoVF", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }

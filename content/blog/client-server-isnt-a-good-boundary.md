@@ -36,24 +36,6 @@ This pattern is commonly referred to as a Backend for Frontend (BFF).
 
 BFFs are a pattern in software where you build an API that is meant specifically for a particular front-end implementation. For example, you might be building a social media app, and you want both a web app and mobile app. Instead of sharing an API between the two, it can be beneficial to introduce a BFF for each app. The BFF will provide specialised endpoints that surface the data that the application wants, in a format that is most appropriate for it. This is useful because the web app may include slightly different features from the mobile app, or may want to lay things out in a different way, which would work better if it had the data coming back from the API in a different format.
 
-```
-Without BFF
-┌────────┐       ┌───────┐
-│Data API│──────>│Web App│
-└────────┘   │   └───────┘
-             │   ┌──────────┐
-             └──>│Mobile App│
-                 └──────────┘
-
-With BFF
-┌────────┐       ┌───────┐       ┌───────┐
-│Data API│──────>│Web BFF│──────>│Web App│
-└────────┘   │   └───────┘       └───────┘
-             │   ┌──────────┐    ┌──────────┐
-             └──>│Mobile BFF│───>│Mobile App│
-                 └──────────┘    └──────────┘
-```
-
 If you're a front-end developer, you might actually be using a BFF already, without even realising it.
 
 Frameworks for building front-end applications these days tend to come with the ability to run server-side code. Astro, Next.js, Remix, Nuxt, and SvelteKit are all examples of frameworks that allow you to run server-side JavaScript, i.e. run a BFF alongside your front-end. In fact, [Remix has a page in their docs about BFFs](https://remix.run/docs/en/main/guides/bff).
