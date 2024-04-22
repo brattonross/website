@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+/* @import "tailwindcss/preflight" layer(base); */
+/* @import "tailwindcss/utilities" layer(utilities); */
 
 @import "@radix-ui/colors/gray.css";
 @import "@radix-ui/colors/gray-alpha.css";
@@ -23,11 +23,136 @@
 		font-variation-settings: "wdth" 100;
 	}
 
-	a:hover {
-		text-decoration: underline;
-	}
-
 	button {
 		cursor: default;
 	}
+}
+
+@layer utilities {
+	.prose {
+		color: var(--color-hi-contrast);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-5);
+
+		a {
+			text-decoration-color: var(--color-gray-a7);
+			text-decoration-line: underline;
+			transition: text-decoration-color 200ms;
+
+			&:hover {
+				text-decoration-color: var(--color-gray-a10);
+			}
+		}
+
+		blockquote {
+			border-color: var(--color-gray-a5);
+			color: var(--color-lo-contrast);
+			font-style: italic;
+			margin-bottom: var(--spacing-5);
+			margin-top: var(--spacing-5);
+			padding-inline-start: var(--spacing-4);
+			position: relative;
+
+			&::before {
+				background-color: var(--color-gray-a10);
+				bottom: 0;
+				content: "";
+				height: 100%;
+				left: 0;
+				position: absolute;
+				top: 0;
+				width: 2px;
+			}
+		}
+
+		code {
+			line-height: var(--line-height-4);
+		}
+
+		h1 {
+			margin-bottom: var(--spacing-5);
+			margin-top: 0;
+		}
+
+		h2 {
+			margin-bottom: var(--spacing-2);
+			margin-top: var(--spacing-5);
+		}
+
+		h1, h2, h3, h4, h5, h6 {
+			font-weight: 600;
+		}
+
+		p {
+			margin-bottom: var(--spacing-5);
+			margin-top: var(--spacing-5);
+		}
+
+		pre {
+			background-color: var(--color-gray-a3);
+			border-radius: var(--radius-lg);
+			padding: var(--spacing-4);
+		}
+
+		li::marker {
+			color: var(--color-gray-a10);
+		}
+	}
+}
+
+@theme {
+	--color-gray-1: var(--gray-1);
+	--color-gray-2: var(--gray-2);
+	--color-gray-3: var(--gray-3);
+	--color-gray-4: var(--gray-4);
+	--color-gray-5: var(--gray-5);
+	--color-gray-6: var(--gray-6);
+	--color-gray-7: var(--gray-7);
+	--color-gray-8: var(--gray-8);
+	--color-gray-9: var(--gray-9);
+	--color-gray-10: var(--gray-10);
+	--color-gray-11: var(--gray-11);
+	--color-gray-12: var(--gray-12);
+	--color-gray-a1: var(--gray-a1);
+	--color-gray-a2: var(--gray-a2);
+	--color-gray-a3: var(--gray-a3);
+	--color-gray-a4: var(--gray-a4);
+	--color-gray-a5: var(--gray-a5);
+	--color-gray-a6: var(--gray-a6);
+	--color-gray-a7: var(--gray-a7);
+	--color-gray-a8: var(--gray-a8);
+	--color-gray-a9: var(--gray-a9);
+	--color-gray-a10: var(--gray-a10);
+	--color-gray-a11: var(--gray-a11);
+	--color-gray-a12: var(--gray-a12);
+
+	--color-teal-1: var(--teal-1);
+	--color-teal-2: var(--teal-2);
+	--color-teal-3: var(--teal-3);
+	--color-teal-4: var(--teal-4);
+	--color-teal-5: var(--teal-5);
+	--color-teal-6: var(--teal-6);
+	--color-teal-7: var(--teal-7);
+	--color-teal-8: var(--teal-8);
+	--color-teal-9: var(--teal-9);
+	--color-teal-10: var(--teal-10);
+	--color-teal-11: var(--teal-11);
+	--color-teal-12: var(--teal-12);
+	--color-teal-a1: var(--teal-a1);
+	--color-teal-a2: var(--teal-a2);
+	--color-teal-a3: var(--teal-a3);
+	--color-teal-a4: var(--teal-a4);
+	--color-teal-a5: var(--teal-a5);
+	--color-teal-a6: var(--teal-a6);
+	--color-teal-a7: var(--teal-a7);
+	--color-teal-a8: var(--teal-a8);
+	--color-teal-a9: var(--teal-a9);
+	--color-teal-a10: var(--teal-a10);
+	--color-teal-a11: var(--teal-a11);
+	--color-teal-a12: var(--teal-a12);
+
+	--color-lo-contrast: var(--color-gray-11);
+	--color-hi-contrast: var(--color-gray-12);
+
+	--font-family-serif: "Bitter", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
