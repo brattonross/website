@@ -31,7 +31,7 @@ func run() error {
 	http.HandleFunc("GET /uses", s.handleUsesPage())
 
 	s.logger.Info("Server listening at http://localhost:" + env.port)
-	return http.ListenAndServe(":"+env.port, nil)
+	return http.ListenAndServe("0.0.0.0:"+env.port, nil)
 }
 
 type env struct {
