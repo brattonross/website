@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -14,69 +15,64 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
+//go:generate bun run build
 func main() {
-	if err := run(); err != nil {
+	if err := run(os.Getenv); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func run() error {
-	env := parseEnv()
-	s := newServer()
-
-	http.Handle("GET /", http.FileServer(http.Dir("public")))
-	http.HandleFunc("GET /{$}", s.handleHomePage())
-	http.HandleFunc("GET /blog", s.handleBlogPage())
-	http.HandleFunc("GET /blog/{slug}", s.handleBlogPostPage())
-	http.HandleFunc("GET /uses", s.handleUsesPage())
-
-	s.logger.Info("Server listening at http://localhost:" + env.port)
-	return http.ListenAndServe("0.0.0.0:"+env.port, nil)
-}
-
-type env struct {
-	port string
-}
-
-func parseEnv() *env {
-	port := os.Getenv("PORT")
+func run(getenv func(string) string) error {
+	host := getenv("HOST")
+	if host == "" {
+		host = "0.0.0.0"
+	}
+	port := getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	return &env{port}
+
+	logger := slog.Default()
+	s := NewServer(logger)
+
+	fmt.Printf("Server listening at http://%s:%s\n", host, port)
+	return http.ListenAndServe(host+":"+port, s)
 }
 
-type server struct {
-	logger *slog.Logger
-}
+func NewServer(logger *slog.Logger) http.Handler {
+	mux := http.NewServeMux()
 
-func newServer() *server {
-	return &server{
-		logger: slog.Default(),
-	}
+	mux.Handle("GET /", http.FileServer(http.Dir("public")))
+	mux.HandleFunc("GET /{$}", handleHomePage(logger))
+	mux.HandleFunc("GET /blog", handleBlogPage(logger))
+	mux.HandleFunc("GET /blog/{slug}", handleBlogPostPage(logger))
+	mux.HandleFunc("GET /uses", handleUsesPage(logger))
+
+	return mux
 }
 
 type handlerFunc func(w http.ResponseWriter, r *http.Request) error
 
-func (s *server) handle(fn handlerFunc) http.HandlerFunc {
+func handle(fn handlerFunc, logger *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := fn(w, r); err != nil {
-			http.Error(w, "unexpected error", http.StatusInternalServerError)
+			logger.Error("http request error", "method", r.Method, "path", r.URL.Path, "error", err)
+			http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		}
 	}
 }
 
-func (s *server) handleHomePage() http.HandlerFunc {
-	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
+func handleHomePage(logger *slog.Logger) http.HandlerFunc {
+	return handle(func(w http.ResponseWriter, r *http.Request) error {
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/index.tmpl")
 		if err != nil {
 			return err
 		}
 		return tmpl.Execute(w, nil)
-	})
+	}, logger)
 }
 
-func (s *server) handleBlogPage() http.HandlerFunc {
+func handleBlogPage(logger *slog.Logger) http.HandlerFunc {
 	type article struct {
 		Title       string
 		Description string
@@ -86,7 +82,7 @@ func (s *server) handleBlogPage() http.HandlerFunc {
 	type data struct {
 		Articles []article
 	}
-	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
+	return handle(func(w http.ResponseWriter, r *http.Request) error {
 		files, err := os.ReadDir("content/blog")
 		if err != nil {
 			return err
@@ -128,10 +124,10 @@ func (s *server) handleBlogPage() http.HandlerFunc {
 			return err
 		}
 		return tmpl.Execute(w, data{Articles: as})
-	})
+	}, logger)
 }
 
-func (s *server) handleBlogPostPage() http.HandlerFunc {
+func handleBlogPostPage(logger *slog.Logger) http.HandlerFunc {
 	type article struct {
 		Title   string
 		Date    time.Time
@@ -140,7 +136,7 @@ func (s *server) handleBlogPostPage() http.HandlerFunc {
 	type data struct {
 		Article article
 	}
-	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
+	return handle(func(w http.ResponseWriter, r *http.Request) error {
 		slug := r.PathValue("slug")
 		a, err := os.ReadFile("content/blog/" + slug + ".md")
 		if err != nil {
@@ -190,15 +186,15 @@ func (s *server) handleBlogPostPage() http.HandlerFunc {
 				Content: content,
 			},
 		})
-	})
+	}, logger)
 }
 
-func (s *server) handleUsesPage() http.HandlerFunc {
-	return s.handle(func(w http.ResponseWriter, r *http.Request) error {
+func handleUsesPage(logger *slog.Logger) http.HandlerFunc {
+	return handle(func(w http.ResponseWriter, r *http.Request) error {
 		tmpl, err := template.ParseFiles("templates/root.tmpl", "templates/uses.tmpl")
 		if err != nil {
 			return err
 		}
 		return tmpl.Execute(w, nil)
-	})
+	}, logger)
 }

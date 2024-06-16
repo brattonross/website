@@ -1,23 +1,30 @@
-FROM oven/bun:latest as client
+FROM golang:1.22 as build
 
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y unzip
+RUN curl -fsSL https://bun.sh/install | BUN_INSTALL=/usr bash
+
 COPY . .
 
 RUN bun install --frozen-lockfile
-RUN bun build main.js --outdir public
-RUN bun tailwindcss -i styles.css -o public/styles.css
+RUN make build
 
-FROM golang:1.22 as server
+FROM alpine:3
 
 WORKDIR /app
-COPY . .
 
-RUN go build -o server
+COPY --from=build /app/bin ./bin
+COPY --from=build /app/content ./content
+COPY --from=build /app/public ./public
+COPY --from=build /app/templates ./templates
 
-COPY --from=client /app/public/main.js /app/public/main.js
-COPY --from=client /app/public/styles.css /app/public/styles.css
+RUN ["ls", "/app"]
+RUN ["ls", "/app/bin"]
+RUN ["ls", "."]
+RUN ["ls", "./bin"]
 
 ENV HOST=0.0.0.0
 ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["./server"]
+CMD ["/app/bin/server"]
